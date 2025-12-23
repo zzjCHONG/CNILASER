@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CNILaser", "CNILaser\CNILaser.csproj", "{E5A3E3A0-7A66-4095-B2F6-B0F07DD41F5C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Simscop.Pl.Hardware.CNI.ThreeChannel", "Simscop.Pl.Hardware.CNI.ThreeChannel\Simscop.Pl.Hardware.CNI.ThreeChannel.shproj", "{B4883C4D-FC3F-47BE-A9F5-769EC989889D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5A3E3A0-7A66-4095-B2F6-B0F07DD41F5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5A3E3A0-7A66-4095-B2F6-B0F07DD41F5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5A3E3A0-7A66-4095-B2F6-B0F07DD41F5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5A3E3A0-7A66-4095-B2F6-B0F07DD41F5C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8FC1DB16-0565-4E95-817E-85D07555B80D}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Simscop.Pl.Hardware.CNI.ThreeChannel\Simscop.Pl.Hardware.CNI.ThreeChannel.projitems*{b4883c4d-fc3f-47be-a9f5-769ec989889d}*SharedItemsImports = 13
+	EndGlobalSection
+EndGlobal
