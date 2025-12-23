@@ -19,6 +19,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.$([System.DateTime]::Now.ToString("yyMMdd"))</FileVersion>
     <InformationalVersion>v1.0.0 (Build $([System.DateTime]::Now.ToString("yyyy-MM-dd")))</InformationalVersion>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +40,7 @@
     <Content Include="Docs\激光器软件说明文档_2024.06.20_v1.0.0.0.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="logo.ico" />
     <!--<Content Include="Image\logo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
