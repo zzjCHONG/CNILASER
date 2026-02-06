@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CNI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CNIR.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ThreeChannelLaser.cs" />
   </ItemGroup>
 </Project>

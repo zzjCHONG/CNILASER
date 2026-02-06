@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36121.58 d17.14
+VisualStudioVersion = 17.14.36121.58
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CNILaser", "CNILaser\CNILaser.csproj", "{E5A3E3A0-7A66-4095-B2F6-B0F07DD41F5C}"
 EndProject
@@ -26,5 +26,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Simscop.Pl.Hardware.CNI.ThreeChannel\Simscop.Pl.Hardware.CNI.ThreeChannel.projitems*{b4883c4d-fc3f-47be-a9f5-769ec989889d}*SharedItemsImports = 13
+		Simscop.Pl.Hardware.CNI.ThreeChannel\Simscop.Pl.Hardware.CNI.ThreeChannel.projitems*{e5a3e3a0-7a66-4095-b2f6-b0f07dd41f5c}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

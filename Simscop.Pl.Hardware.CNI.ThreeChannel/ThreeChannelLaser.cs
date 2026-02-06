@@ -67,6 +67,46 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             return await Task.Run(() => SetPower(count, value));
         }
 
+        public bool Init(string com = "")
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetState(int count, bool state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetState(int count, out bool state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetPowers(out Dictionary<int, int> powers)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SetStateAsync(int count, bool state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<(bool, Dictionary<int, int>)> GetPowersAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SetControlModeAsync(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetControlMode(int index)
+        {
+            throw new NotImplementedException();
+        }
+
         ~ThreeChannelLaser()
             => _CNI!.CloseCom();
     }
