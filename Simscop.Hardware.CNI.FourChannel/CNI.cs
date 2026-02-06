@@ -11,7 +11,7 @@ namespace Simscop.Hardware.CNI.FourChannel
         private string? _portName;
         private readonly ManualResetEventSlim _dataReceivedEvent = new(false);
         private byte[] _receivedDataforValid = Array.Empty<byte>();
-        private readonly int _validTimeout = 1000;
+        private readonly int _validTimeout = 300;
 
         public CNI()
         {
@@ -94,6 +94,10 @@ namespace Simscop.Hardware.CNI.FourChannel
                                 _serialPort.DataReceived -= SerialPort_DataReceived_Valid;
                                 return true;
                             }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"校验{portName}，非目标串口！");
                         }
 
                         _serialPort.Close();
@@ -875,9 +879,9 @@ namespace Simscop.Hardware.CNI.FourChannel
                 }
                 else
                 {
-                    Console.WriteLine($"Write Failed: Channel={channel}");
-                    Console.WriteLine($"Expected: {BitConverter.ToString(expectedResponse)}");
-                    Console.WriteLine($"Received: {BitConverter.ToString(validResponse)}");
+                    Console.WriteLine($"\r\n##############Write Failed: Channel={channel}");
+                    Console.WriteLine($"##############Expected: {BitConverter.ToString(expectedResponse)}");
+                    Console.WriteLine($"##############Received: {BitConverter.ToString(validResponse)}\r\n");
                 }
 
                 return isCorrect;
@@ -1076,7 +1080,6 @@ namespace Simscop.Hardware.CNI.FourChannel
             return info;
         }
 
-        #region Enums
 
         public enum ChannelEnum
         {
@@ -1106,6 +1109,5 @@ namespace Simscop.Hardware.CNI.FourChannel
             InternalControl = 1,
         }
 
-        #endregion
     }
 }

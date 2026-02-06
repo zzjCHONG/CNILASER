@@ -36,13 +36,9 @@ namespace Simscop.Hardware.CNI.FourChannel
                 InfoDirectory[InfoEnum.Model] = "CNI Four Channel Laser";
                 InfoDirectory[InfoEnum.Version] = "1.0.0";
 
-                // 尝试读取设备详细信息（可选）
                 if (_cni.ReadDeviceInfo(out var deviceInfo) && deviceInfo != null)
                 {
-                    // 如果成功读取设备信息，可以基于设备信息更新或添加额外信息
-                    // 但由于 InfoEnum 限制，这里主要用于验证设备连接正常
-                    Console.WriteLine($"Device info retrieved: Laser1 Current={deviceInfo.Laser1Current}, " +
-                                    $"Preheat State={deviceInfo.PreheatState}");
+                    Console.WriteLine($"Device info retrieved: Laser1 Current={deviceInfo.Laser1Current}, " + $"Preheat State={deviceInfo.PreheatState}");
                 }
 
                 Console.WriteLine($"CNI Laser initialized successfully");

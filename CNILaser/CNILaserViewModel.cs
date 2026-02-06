@@ -31,7 +31,7 @@ namespace CNILaser
                 _timerComs.Enabled = true;
             }
 
-            _timer = new DispatcherTimer(priority: DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(300)};
+            _timer = new DispatcherTimer(priority: DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(100)};
             _timer.Tick += Timer_Tick;
             _timer.Start();
         }
@@ -198,10 +198,15 @@ namespace CNILaser
     public partial class CNILaserViewModel
     {
         [ObservableProperty]
-        private List<string>? _controlMode = new() { "标准模式", "TTL模式" };
+        private List<string>? _controlMode = new() { "外部控制", "内部控制" };
 
         [ObservableProperty]
         public int _controlModeIndex = 0;
+
+        partial void OnControlModeIndexChanged(int value)
+        {
+            _laserwaveLaser!.SetControlModeAsync(value);
+        }
 
         [ObservableProperty]
         private int channelThreeChannel1ActualValue = 0;
@@ -222,10 +227,10 @@ namespace CNILaser
         private string _channelThreeChannel2Name = "488nm";
 
         [ObservableProperty]
-        private string _channelThreeChannel3Name = "525nm";
+        private string _channelThreeChannel3Name = "532nm";
 
         [ObservableProperty]
-        private string _channelThreeChannel4Name = "561nm";
+        private string _channelThreeChannel4Name = "640nm";
 
         [ObservableProperty]
         private int _channelThreeChannel1Value = 22;

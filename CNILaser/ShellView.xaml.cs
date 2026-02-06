@@ -32,7 +32,7 @@ namespace CNILaser
             {
                 //关闭设备，激光器各通道关闭
                 var laserVM = Global.ServiceProvider?.GetService<CNILaserViewModel>();
-                laserVM!.CloserAllLaserChannel();
+                var res = laserVM!.CloserAllLaserChannel();
 
                 base.OnClosing(e);
             }

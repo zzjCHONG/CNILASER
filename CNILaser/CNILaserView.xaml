@@ -312,28 +312,29 @@
             </StackPanel>
         </GroupBox>
 
-        <UniformGrid
-            Margin="10,5"
-            Columns="4"
-            IsEnabled="{Binding IsOperable}">
+        <UniformGrid Margin="10,5" Columns="4">
             <ComboBox
                 x:Name="ModeComboBox"
                 DockPanel.Dock="Left"
+                IsEnabled="{Binding IsConnected}"
                 ItemsSource="{Binding ControlMode}"
                 SelectedIndex="{Binding ControlModeIndex, Mode=TwoWay}" />
             <ComboBox
                 x:Name="ComComboBox"
                 DockPanel.Dock="Left"
+                IsEnabled="{Binding IsOperable}"
                 ItemsSource="{Binding SerialComs}"
                 SelectedIndex="{Binding SerialIndex, Mode=TwoWay}" />
             <Button
                 HorizontalAlignment="Stretch"
                 Command="{Binding InitManualCommand}"
-                Content="手动连接" />
+                Content="手动连接"
+                IsEnabled="{Binding IsOperable}" />
             <Button
                 HorizontalAlignment="Stretch"
                 Command="{Binding InitCommand}"
-                Content="自动连接" />
+                Content="自动连接"
+                IsEnabled="{Binding IsOperable}" />
         </UniformGrid>
     </StackPanel>
 
