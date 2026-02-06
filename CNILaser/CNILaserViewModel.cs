@@ -1,5 +1,4 @@
-﻿using CNILaser.Core;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Simscop.Pl.Core.Hardwares.Interfaces;

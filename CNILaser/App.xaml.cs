@@ -62,6 +62,7 @@ namespace CNILaser
              .AddSingleton<CNILaserViewModel>()
              .AddSingleton<VersionWindow>()
              .AddSingleton<ShellView>()
+             .AddSingleton<ParamView>()
 
              .BuildServiceProvider();
         }

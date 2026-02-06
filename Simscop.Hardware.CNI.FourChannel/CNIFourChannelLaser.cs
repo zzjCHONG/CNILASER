@@ -36,9 +36,16 @@ namespace Simscop.Hardware.CNI.FourChannel
                 InfoDirectory[InfoEnum.Model] = "CNI Four Channel Laser";
                 InfoDirectory[InfoEnum.Version] = "1.0.0";
 
-                if (_cni.ReadDeviceInfo(out var deviceInfo) && deviceInfo != null)
+                if (_cni.ReadDeviceInfo(out var info) && info != null)
                 {
-                    Console.WriteLine($"Device info retrieved: Laser1 Current={deviceInfo.Laser1Current}, " + $"Preheat State={deviceInfo.PreheatState}");
+                    Console.WriteLine($"  Laser1: {(info.Laser1OnOff ? "ON " : "OFF")} | Current: {info.Laser1Current,4} mA | Temp: {info.Laser1Temperature,3}°C");
+                    Console.WriteLine($"  Laser2: {(info.Laser2OnOff ? "ON " : "OFF")} | Current: {info.Laser2Current,4} mA | Temp: {info.Laser2Temperature,3}°C");
+                    Console.WriteLine($"  Laser3: {(info.Laser3OnOff ? "ON " : "OFF")} | Current: {info.Laser3Current,4} mA | Temp: {info.Laser3Temperature,3}°C");
+                    Console.WriteLine($"  Laser4: {(info.Laser4OnOff ? "ON " : "OFF")} | Current: {info.Laser4Current,4} mA | Temp: {info.Laser4Temperature,3}°C");
+                    Console.WriteLine($"  Preheat: {info.PreheatState}");
+                    Console.WriteLine($"  Interlock: {(info.InterlockError ? "ERROR" : "OK")}");
+                    Console.WriteLine($"  E-Stop: {(info.EstopError ? "TRIGGERED" : "OK")}");
+                    Console.WriteLine($"  Keys: K1={info.Key1State} K2={info.Key2State} K3={info.Key3State} K4={info.Key4State} K5={info.Key5State}");
                 }
 
                 Console.WriteLine($"CNI Laser initialized successfully");
