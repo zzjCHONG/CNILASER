@@ -977,65 +977,48 @@ namespace Simscop.Hardware.CNI.FourChannel
     {
         /// <summary>
         /// 设备信息数据结构（从0x0A命令返回的80字节数据）
+        /// 根据 SIG81 RS-232 协议精确对应
         /// </summary>
         public class DeviceInfo
         {
-            // Laser1 电流值 (mA)
+            // Laser1 电流值 (mA) - Byte 1-2
             public int Laser1Current { get; set; }
-            public int Laser1Temperature { get; set; } // ℃
+            // Laser1 温度 (℃) - Byte 8
+            public int Laser1Temperature { get; set; }
 
-            // Laser2 电流值 (mA)
+            // Laser2 电流值 (mA) - Byte 9-10
             public int Laser2Current { get; set; }
-            public int Laser2Temperature { get; set; } // ℃
+            // Laser2 温度 (℃) - Byte 13
+            public int Laser2Temperature { get; set; }
 
-            // Laser3 电流值 (mA)
-            public int Laser3Current { get; set; }
-            public int Laser3Temperature { get; set; } // ℃
-
-            // Laser4 电流值 (mA)
+            // Laser4 电流值 (mA) - Byte 16-17 (注意：协议中没有Laser3，直接是Laser4)
             public int Laser4Current { get; set; }
-            public int Laser4Temperature { get; set; } // ℃
+            // Laser4 温度 (℃) - Byte 27
+            public int Laser4Temperature { get; set; }
 
-            // 按键状态 (Byte41)
-            public bool Key1State { get; set; }
-            public bool Key2State { get; set; }
-            public bool Key3State { get; set; }
-            public bool Key4State { get; set; }
-            public bool Key5State { get; set; }
+            // 按键状态 (Byte 41): 0=off, 1=on
+            public bool KeyState { get; set; }
 
-            // 预热状态 (Byte42): 0=预热中, 1=完成, 2=系统错误
+            // 预热状态 (Byte 42): 0=预热中, 1=完成, 2=系统错误
             public PreheatStatus PreheatState { get; set; }
 
-            // 互锁状态 (Byte43): 0=正常, 1=错误
+            // 互锁状态 (Byte 43): 0=正常, 1=错误
             public bool InterlockError { get; set; }
 
-            // 急停状态 (Byte44): 0=正常, 1=错误
+            // 急停状态 (Byte 44): 0=正常, 1=错误
             public bool EstopError { get; set; }
 
             // 激光器开关标志
-            public bool Laser1OnOff { get; set; } // Byte59
-            public bool Laser2OnOff { get; set; } // Byte60
-            public bool Laser3OnOff { get; set; } // Byte61
-            public bool Laser4OnOff { get; set; } // Byte62
-
-            public override string ToString()
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("=== 设备信息 ===");
-                sb.AppendLine($"Laser1: {(Laser1OnOff ? "ON" : "OFF")}, 电流={Laser1Current}mA, 温度={Laser1Temperature}°C");
-                sb.AppendLine($"Laser2: {(Laser2OnOff ? "ON" : "OFF")}, 电流={Laser2Current}mA, 温度={Laser2Temperature}°C");
-                sb.AppendLine($"Laser3: {(Laser3OnOff ? "ON" : "OFF")}, 电流={Laser3Current}mA, 温度={Laser3Temperature}°C");
-                sb.AppendLine($"Laser4: {(Laser4OnOff ? "ON" : "OFF")}, 电流={Laser4Current}mA, 温度={Laser4Temperature}°C");
-                sb.AppendLine($"预热状态: {PreheatState}");
-                sb.AppendLine($"互锁状态: {(InterlockError ? "错误" : "正常")}");
-                sb.AppendLine($"急停状态: {(EstopError ? "触发" : "正常")}");
-                sb.AppendLine($"按键状态: K1={Key1State} K2={Key2State} K3={Key3State} K4={Key4State} K5={Key5State}");
-                return sb.ToString();
-            }
+            public bool Laser1OnOff { get; set; } // Byte 59
+            public bool Laser2OnOff { get; set; } // Byte 60
+            public bool Laser3OnOff { get; set; } // Byte 61
+            public bool Laser4OnOff { get; set; } // Byte 62
         }
 
         /// <summary>
-        /// 解析设备信息（修复版本）
+        /// 解析设备信息 - 严格按照协议文档
+        /// 协议格式：0x41 + 0x56 + 0x0A + 0x00 + 80字节数据 + checksum + 0x0D
+        /// 总长度：86字节
         /// </summary>
         private static DeviceInfo ParseDeviceInfo(byte[] response)
         {
@@ -1047,14 +1030,14 @@ namespace Simscop.Hardware.CNI.FourChannel
                 return info;
             }
 
-            // 验证帧头
+            // 验证帧头：0x41, 0x56(86), 0x0A, 0x00
             if (response[0] != 0x41 || response[1] != 0x56 || response[2] != 0x0A || response[3] != 0x00)
             {
                 Console.WriteLine($"ParseDeviceInfo: Invalid header [0x{response[0]:X2}, 0x{response[1]:X2}, 0x{response[2]:X2}, 0x{response[3]:X2}]");
                 return info;
             }
 
-            // 验证帧尾
+            // 验证帧尾：0x0D
             if (response[85] != 0x0D)
             {
                 Console.WriteLine($"ParseDeviceInfo: Invalid footer 0x{response[85]:X2}, expected 0x0D");
@@ -1062,7 +1045,7 @@ namespace Simscop.Hardware.CNI.FourChannel
 
             // 验证校验和
             int calculatedChecksum = 0;
-            for (int i = 0; i < 84; i++)
+            for (int i = 0; i < 84; i++) // 从0到83，共84字节
             {
                 calculatedChecksum += response[i];
             }
@@ -1073,56 +1056,54 @@ namespace Simscop.Hardware.CNI.FourChannel
                 Console.WriteLine($"ParseDeviceInfo: Checksum mismatch. Expected 0x{calculatedChecksum:X2}, got 0x{response[84]:X2}");
             }
 
-            // 数据从 byte[4] 开始（前4字节是协议头: 0x41, 0x56, 0x0A, 0x00）
-            // payload 是80字节的有效数据
-            int dataOffset = 4;
+            // 数据从 response[4] 开始（前4字节是协议头）
+            // 80字节有效数据的索引范围：response[4] 到 response[83]
+            // 为了方便理解，我们创建一个从0开始的data数组
+            byte[] data = new byte[80];
+            Array.Copy(response, 4, data, 0, 80);
 
             try
             {
-                // Laser1 电流值 (Byte 1-2, 高字节在前)
-                info.Laser1Current = (response[dataOffset + 0] << 8) | response[dataOffset + 1];
+                // ==================== Laser1 数据 ====================
+                // Byte 1-2: Laser1 电流值 (高字节在前, mA)
+                info.Laser1Current = (data[0] << 8) | data[1];
 
-                // Byte 3-7 未使用 (NU)
+                // Byte 3-7: NU (未使用)
 
-                // Laser1 温度 (Byte 8)
-                info.Laser1Temperature = response[dataOffset + 7];
+                // Byte 8: Laser1 温度 (℃)
+                info.Laser1Temperature = data[7];
 
-                // Laser2 电流值 (Byte 9-10, 高字节在前)
-                info.Laser2Current = (response[dataOffset + 8] << 8) | response[dataOffset + 9];
+                // ==================== Laser2 数据 ====================
+                // Byte 9-10: Laser2 电流值 (高字节在前, mA)
+                info.Laser2Current = (data[8] << 8) | data[9];
 
-                // Byte 11-12 未使用 (NU)
+                // Byte 11-12: NU (未使用)
 
-                // Laser2 温度 (Byte 13)
-                info.Laser2Temperature = response[dataOffset + 12];
+                // Byte 13: Laser2 温度 (℃)
+                info.Laser2Temperature = data[12];
 
-                // Laser3 电流值 (Byte 14-15, 高字节在前) - 根据协议推测
-                info.Laser3Current = (response[dataOffset + 13] << 8) | response[dataOffset + 14];
+                // ==================== Laser4 数据 ====================
+                // Byte 14-15: NU (未使用) - 注意：这里没有Laser3
 
-                // Byte 16-19 未使用
+                // Byte 16-17: Laser4 电流值 (高字节在前, mA)
+                // 根据协议表格，Laser4 current 从 Byte16 开始
+                info.Laser4Current = (data[15] << 8) | data[16];
 
-                // Laser3 温度 (Byte 20)
-                info.Laser3Temperature = response[dataOffset + 19];
+                // Byte 18-26: NU (未使用)
 
-                // Laser4 电流值 (Byte 21-22, 高字节在前) - 根据协议推测
-                info.Laser4Current = (response[dataOffset + 20] << 8) | response[dataOffset + 21];
+                // Byte 27: Laser4 温度 (℃)
+                info.Laser4Temperature = data[26];
 
-                // Byte 23-26 未使用
+                // ==================== Byte 28-40: 全部 NU ====================
 
-                // Laser4 温度 (Byte 27)
-                info.Laser4Temperature = response[dataOffset + 26];
+                // ==================== 状态字节 ====================
+                // Byte 41 (data[40]): 按键状态
+                // 只取最低位 (bit 0)
+                info.KeyState = (data[40] & 0x01) != 0;
 
-                // Byte 28-40 大部分未使用
-
-                // 按键状态 (Byte 41, 索引 40)
-                byte keyState = response[dataOffset + 40];
-                info.Key1State = (keyState & 0x01) != 0;
-                info.Key2State = (keyState & 0x02) != 0;
-                info.Key3State = (keyState & 0x04) != 0;
-                info.Key4State = (keyState & 0x08) != 0;
-                info.Key5State = (keyState & 0x10) != 0;
-
-                // 预热状态 (Byte 42, 索引 41)
-                int preheatValue = response[dataOffset + 41];
+                // Byte 42 (data[41]): 预热状态
+                // 0=预热中, 1=完成, 2=系统错误
+                int preheatValue = data[41];
                 info.PreheatState = preheatValue switch
                 {
                     0 => PreheatStatus.Preheating,
@@ -1131,21 +1112,40 @@ namespace Simscop.Hardware.CNI.FourChannel
                     _ => PreheatStatus.Unknown
                 };
 
-                // 互锁状态 (Byte 43, 索引 42)
-                info.InterlockError = response[dataOffset + 42] != 0;
+                // Byte 43 (data[42]): 互锁状态
+                // 0=正常, 1=错误
+                info.InterlockError = data[42] != 0;
 
-                // 急停状态 (Byte 44, 索引 43)
-                info.EstopError = response[dataOffset + 43] != 0;
+                // Byte 44 (data[43]): 急停状态
+                // 0=正常, 1=错误
+                info.EstopError = data[43] != 0;
 
-                // Byte 45-58 未使用
+                // ==================== Byte 45-58: 全部 NU ====================
 
-                // 激光器开关标志
-                info.Laser1OnOff = response[dataOffset + 58] != 0; // Byte 59
-                info.Laser2OnOff = response[dataOffset + 59] != 0; // Byte 60
-                info.Laser3OnOff = response[dataOffset + 60] != 0; // Byte 61
-                info.Laser4OnOff = response[dataOffset + 61] != 0; // Byte 62
+                // ==================== 激光器开关标志 ====================
+                // Byte 59 (data[58]): Laser1 开关标志
+                info.Laser1OnOff = data[58] != 0;
 
-                // Byte 63-80 未使用
+                // Byte 60 (data[59]): Laser2 开关标志
+                info.Laser2OnOff = data[59] != 0;
+
+                // Byte 61 (data[60]): Laser3 开关标志
+                info.Laser3OnOff = data[60] != 0;
+
+                // Byte 62 (data[61]): Laser4 开关标志
+                info.Laser4OnOff = data[61] != 0;
+
+                // ==================== Byte 63-80: 全部 NU ====================
+
+                // 输出调试信息
+                Console.WriteLine($"=== Device Info Parsed ===");
+                Console.WriteLine($"Laser1: Current={info.Laser1Current}mA, Temp={info.Laser1Temperature}℃, OnOff={info.Laser1OnOff}");
+                Console.WriteLine($"Laser2: Current={info.Laser2Current}mA, Temp={info.Laser2Temperature}℃, OnOff={info.Laser2OnOff}");
+                Console.WriteLine($"Laser3: OnOff={info.Laser3OnOff}");
+                Console.WriteLine($"Laser4: Current={info.Laser4Current}mA, Temp={info.Laser4Temperature}℃, OnOff={info.Laser4OnOff}");
+                Console.WriteLine($"KeyState={info.KeyState}, PreheatState={info.PreheatState}");
+                Console.WriteLine($"InterlockError={info.InterlockError}, EstopError={info.EstopError}");
+                Console.WriteLine($"========================");
             }
             catch (Exception ex)
             {

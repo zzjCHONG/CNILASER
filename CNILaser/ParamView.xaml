@@ -9,4 +9,8 @@
     d:DesignWidth="400"
     mc:Ignorable="d">
 
+    <Grid>
+        <GroupBox Header="激光器参数" />
+    </Grid>
+
 </UserControl>
