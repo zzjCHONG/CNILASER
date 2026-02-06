@@ -52,4 +52,6 @@
     </Content>-->
   </ItemGroup>
 
+  <Import Project="..\Simscop.Pl.Hardware.CNI.ThreeChannel\Simscop.Pl.Hardware.CNI.ThreeChannel.projitems" Label="Shared" />
+
 </Project>

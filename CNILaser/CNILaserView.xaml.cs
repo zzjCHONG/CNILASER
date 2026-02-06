@@ -71,16 +71,37 @@ namespace CNILaser
 
         private void ParentWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var clickedElement = e.OriginalSource as FrameworkElement;
+            if (e.OriginalSource is not FrameworkElement clickedElement)
+                return;
 
-            bool isClickInsideThisControl = IsElementInsideControl(clickedElement!, this);
+            if (IsClickOnMenu(clickedElement))
+                return;
 
-            bool isTextBoxClick = IsDescendantOfTextBox(clickedElement!);
+            bool isClickInsideThisControl = IsElementInsideControl(clickedElement, this);
+            bool isTextBoxClick = IsDescendantOfTextBox(clickedElement);
 
-            if (isClickInsideThisControl && isTextBoxClick) return;
+            if (isClickInsideThisControl && isTextBoxClick)
+                return;
 
             var focusedTextBox = GetFocusedTextBoxInControl();
-            if (focusedTextBox != null) ProcessTextBoxInput(focusedTextBox);
+            if (focusedTextBox == null)
+                return;
+
+            ProcessTextBoxInput(focusedTextBox);
+        }
+
+        private static bool IsClickOnMenu(FrameworkElement element)
+        {
+            if (element == null) return false;
+
+            DependencyObject current = element;
+            while (current != null)
+            {
+                if (current is MenuItem || current is Menu)
+                    return true;
+                current = VisualTreeHelper.GetParent(current);
+            }
+            return false;
         }
 
         private static bool IsElementInsideControl(FrameworkElement element, FrameworkElement control)
