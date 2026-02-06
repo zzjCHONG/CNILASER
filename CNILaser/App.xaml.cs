@@ -1,9 +1,8 @@
 ﻿using CNILaser.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Simscop.Hardware.CNI.FourChannel;
 using Simscop.Pl.Core.Hardwares.Interfaces;
 using Simscop.Spindisk.Wpf.Views;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -58,7 +57,7 @@ namespace CNILaser
             Global.ServiceProvider = new ServiceCollection()
 
              // add interface
-             .AddSingleton<ILaser, FakeLaser>()
+             .AddSingleton<ILaser, CNIFourChannelLaser>()//FakeLaser,CNIFourChannelLaser
              .AddSingleton<CNILaserView>()
              .AddSingleton<CNILaserViewModel>()
              .AddSingleton<VersionWindow>()

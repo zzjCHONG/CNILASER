@@ -34,6 +34,7 @@
     <PackageReference Include="Lift.UI" Version="1.0.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="System.Management" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,17 +42,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="logo.ico" />
-    <!--<Content Include="Image\logo.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Image\logo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Image\logo_black.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>-->
   </ItemGroup>
 
-  <Import Project="..\Simscop.Pl.Hardware.CNI.ThreeChannel\Simscop.Pl.Hardware.CNI.ThreeChannel.projitems" Label="Shared" />
+  <Import Project="..\Simscop.Hardware.CNI.FourChannel\Simscop.Hardware.CNI.FourChannel.projitems" Label="Shared" />
 
 </Project>

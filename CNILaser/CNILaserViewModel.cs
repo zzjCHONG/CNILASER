@@ -1,6 +1,7 @@
 ﻿using CNILaser.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Simscop.Pl.Core.Hardwares.Interfaces;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -19,7 +20,7 @@ namespace CNILaser
 
         public CNILaserViewModel()
         {
-            _laserwaveLaser = new FakeLaser();
+            _laserwaveLaser = Global.ServiceProvider!.GetRequiredService<ILaser>();  
 
             SerialComs?.AddRange(SerialPort.GetPortNames());
             if (_timerComs == null)

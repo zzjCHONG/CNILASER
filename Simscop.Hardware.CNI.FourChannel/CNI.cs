@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
 using System.IO.Ports;
+using System.Management;
 using System.Text;
 
-namespace Simscop.Pl.Hardware.CNI.ThreeChannel
+namespace Simscop.Hardware.CNI.FourChannel
 {
-    public partial class CNIR
+    public partial class CNI
     {
         private readonly SerialPort? _serialPort;
         private string? _portName;
@@ -12,21 +13,7 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
         private byte[] _receivedDataforValid = Array.Empty<byte>();
         private readonly int _validTimeout = 1000;
 
-        private readonly byte[] commandBase = new byte[8] { 0x53, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
-        private readonly byte[] responseforSetting = new byte[9] { 0x41, 0x09, 0x00, 0x01, 0x4F, 0x4B, 0x21, 0x00, 0x0D };
-        private readonly byte[] responseforReading = new byte[9] { 0x41, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
-
-        public int VerifyLaserChannel1 { get; private set; } = 0;
-        public int VerifyLaserChannel2 { get; private set; } = 0;
-        public int VerifyLaserChannel3 { get; private set; } = 0;
-        public int VerifyLaserChannel4 { get; private set; } = 0;
-
-        private bool Channel1Enable = false;
-        private bool Channel2Enable = false;
-        private bool Channel3Enable = false;
-        private bool Channel4Enable = false;
-
-        public CNIR()
+        public CNI()
         {
             _serialPort = new SerialPort()
             {
@@ -37,9 +24,7 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             };
         }
 
-        #region Connection Management
-
-        public bool OpenCom(string com = "")
+        public bool Connect(string com = "")
         {
             if (Valid(com))
             {
@@ -70,11 +55,7 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             _waitHandle?.Dispose();
         }
 
-        ~CNIR() => Dispose();
-
-        #endregion
-
-        #region Validation
+        ~CNI() => Dispose();
 
         private bool Valid(string com)
         {
@@ -187,7 +168,13 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
 
         private static bool CheckPort(string portName)
         {
-            SerialPort port = new SerialPort(portName);
+            if (IsBluetoothPort(portName))
+            {
+                Console.WriteLine($"串口 {portName} 识别为蓝牙设备，已自动跳过以防止挂起。");
+                return false;
+            }
+
+            SerialPort port = new(portName);
             try
             {
                 port.Open();
@@ -206,9 +193,49 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             }
         }
 
-        #endregion
+        private static bool IsBluetoothPort(string portName)
+        {
+            try
+            {
+                // 查询 PnP 实体中包含该串口号的设备描述
+                using var searcher = new ManagementObjectSearcher(
+                    $"SELECT Caption, Description FROM Win32_PnPEntity WHERE Caption LIKE '%({portName})%'");
 
-        #region Public Async Methods
+                foreach (var device in searcher.Get())
+                {
+                    string caption = device["Caption"]?.ToString() ?? "";
+                    string description = device["Description"]?.ToString() ?? "";
+
+                    // 检查是否包含“Bluetooth”或“蓝牙”关键字
+                    if (caption.Contains("Bluetooth", StringComparison.OrdinalIgnoreCase)
+                        || description.Contains("Bluetooth", StringComparison.OrdinalIgnoreCase)
+                        || caption.Contains("蓝牙", StringComparison.OrdinalIgnoreCase)
+                        || description.Contains("蓝牙", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 如果 WMI 查询失败，为了安全起见可以记录日志
+                Debug.WriteLine($"WMI 查询失败: {ex.Message}");
+            }
+            return false;
+        }
+    }
+
+    public partial class CNI
+    {
+        public int VerifyLaserChannel1 { get; private set; } = 0;
+        public int VerifyLaserChannel2 { get; private set; } = 0;
+        public int VerifyLaserChannel3 { get; private set; } = 0;
+        public int VerifyLaserChannel4 { get; private set; } = 0;
+
+        private bool Channel1Enable = false;
+        private bool Channel2Enable = false;
+        private bool Channel3Enable = false;
+        private bool Channel4Enable = false;
 
         /// <summary>
         /// 异步设置激光功率
@@ -324,10 +351,6 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             var (success, value) = await GetValueAsync(channelEnum);
             return (success, Convert.ToBoolean(value));
         }
-
-        #endregion
-
-        #region Public Sync Methods
 
         /// <summary>
         /// 同步设置激光功率
@@ -475,10 +498,6 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             return true;
         }
 
-        #endregion
-
-        #region Advanced Features
-
         /// <summary>
         /// 设置电流控制模式
         /// </summary>
@@ -583,9 +602,13 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             }
         }
 
-        #endregion
+    }
 
-        #region Core Communication - Async
+    public partial class CNI
+    {
+        private readonly byte[] commandBase = new byte[8] { 0x53, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
+        private readonly byte[] responseforSetting = new byte[9] { 0x41, 0x09, 0x00, 0x01, 0x4F, 0x4B, 0x21, 0x00, 0x0D };
+        private readonly byte[] responseforReading = new byte[9] { 0x41, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
 
         private TaskCompletionSource<byte[]>? _commandTcs;
         private byte[] _receiveBuffer = Array.Empty<byte>();
@@ -719,10 +742,6 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             }
         }
 
-        #endregion
-
-        #region Core Communication - Sync
-
         public bool GetValue(ChannelEnum channel, out int value)
         {
             try
@@ -797,10 +816,6 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             else
                 return Array.Empty<byte>();
         }
-
-        #endregion
-
-        #region Protocol Helpers
 
         private bool VerifyResponse(ChannelEnum channel, CommandEnum command, byte[] response, out int value)
         {
@@ -952,11 +967,10 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
 
             return ((byteArray[0] & 0xFF) << 8) | (byteArray[1] & 0xFF);
         }
+    }
 
-        #endregion
-
-        #region Device Info Structure
-
+    public partial class CNI
+    {
         /// <summary>
         /// 设备信息数据结构（从0x0A命令返回的80字节数据）
         /// </summary>
@@ -1001,7 +1015,7 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             public bool Laser4OnOff { get; set; } // Byte62
         }
 
-        private DeviceInfo ParseDeviceInfo(byte[] response)
+        private static DeviceInfo ParseDeviceInfo(byte[] response)
         {
             var info = new DeviceInfo();
 
@@ -1061,8 +1075,6 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
 
             return info;
         }
-
-        #endregion
 
         #region Enums
 

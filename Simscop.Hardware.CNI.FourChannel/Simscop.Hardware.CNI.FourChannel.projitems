@@ -3,13 +3,13 @@
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>b4883c4d-fc3f-47be-a9f5-769ec989889d</SharedGUID>
+    <SharedGUID>2529b756-a151-497c-9f38-beae1d74a845</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Simscop.Pl.Hardware.CNI.ThreeChannel</Import_RootNamespace>
+    <Import_RootNamespace>Simscop.Hardware.CNI.FourChannel</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)CNI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FourChannelLaser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CNIFourChannelLaser.cs" />
+    <Compile Include="..\Simscop.Hardware.CNI.FourChannel\CNI.cs" />
   </ItemGroup>
 </Project>

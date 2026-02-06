@@ -3,13 +3,13 @@ using Simscop.Pl.Core.Hardwares.Interfaces;
 
 namespace Simscop.Pl.Hardware.CNI.ThreeChannel
 {
-    public class ThreeChannelLaser : ILaser
+    public class FourChannelLaser : ILaser
     {
-        public string DevicesName { get; set; } = "ThreeChannel";
+        public string DevicesName { get; set; } = "FourChannel";
 
         private readonly CNI _CNI;
 
-        public ThreeChannelLaser()
+        public FourChannelLaser()
         {
             _CNI = new CNI();
         }
@@ -107,7 +107,7 @@ namespace Simscop.Pl.Hardware.CNI.ThreeChannel
             throw new NotImplementedException();
         }
 
-        ~ThreeChannelLaser()
+        ~FourChannelLaser()
             => _CNI!.CloseCom();
     }
 }
