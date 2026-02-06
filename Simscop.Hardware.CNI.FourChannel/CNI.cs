@@ -11,7 +11,7 @@ namespace Simscop.Hardware.CNI.FourChannel
         private string? _portName;
         private readonly ManualResetEventSlim _dataReceivedEvent = new(false);
         private byte[] _receivedDataforValid = Array.Empty<byte>();
-        private readonly int _validTimeout = 300;
+        private readonly int _validTimeout = 1000;
 
         public CNI()
         {
@@ -210,7 +210,7 @@ namespace Simscop.Hardware.CNI.FourChannel
                     string caption = device["Caption"]?.ToString() ?? "";
                     string description = device["Description"]?.ToString() ?? "";
 
-                    // 检查是否包含“Bluetooth”或“蓝牙”关键字
+                    // 检查是否包含"Bluetooth"或"蓝牙"关键字
                     if (caption.Contains("Bluetooth", StringComparison.OrdinalIgnoreCase)
                         || description.Contains("Bluetooth", StringComparison.OrdinalIgnoreCase)
                         || caption.Contains("蓝牙", StringComparison.OrdinalIgnoreCase)
@@ -310,7 +310,7 @@ namespace Simscop.Hardware.CNI.FourChannel
                 _ => throw new ArgumentException("Invalid channel index, must be 1-4", nameof(index))
             };
 
-            var result = await SetValueAsync(channelEnum, Convert.ToInt32(status));
+            var result = await SetValueAsync(channelEnum, status ? 1 : 0);
 
             if (result)
             {
@@ -353,7 +353,7 @@ namespace Simscop.Hardware.CNI.FourChannel
             };
 
             var (success, value) = await GetValueAsync(channelEnum);
-            return (success, Convert.ToBoolean(value));
+            return (success, value != 0);
         }
 
         /// <summary>
@@ -418,7 +418,7 @@ namespace Simscop.Hardware.CNI.FourChannel
                 _ => throw new ArgumentException("Invalid channel index, must be 1-4", nameof(index))
             };
 
-            var result = SetValue(channelEnum, Convert.ToInt32(status));
+            var result = SetValue(channelEnum, status ? 1 : 0);
 
             if (result)
             {
@@ -460,7 +460,7 @@ namespace Simscop.Hardware.CNI.FourChannel
             };
 
             var res = GetValue(channelEnum, out var value);
-            status = Convert.ToBoolean(value);
+            status = value != 0;
             return res;
         }
 
@@ -612,7 +612,7 @@ namespace Simscop.Hardware.CNI.FourChannel
     {
         private readonly byte[] commandBase = new byte[8] { 0x53, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
         private readonly byte[] responseforSetting = new byte[9] { 0x41, 0x09, 0x00, 0x01, 0x4F, 0x4B, 0x21, 0x00, 0x0D };
-        private readonly byte[] responseforReading = new byte[9] { 0x41, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
+        private readonly byte[] responseforReading = new byte[8] { 0x41, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
 
         private TaskCompletionSource<byte[]>? _commandTcs;
         private byte[] _receiveBuffer = Array.Empty<byte>();
@@ -981,19 +981,19 @@ namespace Simscop.Hardware.CNI.FourChannel
         public class DeviceInfo
         {
             // Laser1 电流值 (mA)
-            public string Laser1Current { get; set; } = string.Empty;
+            public int Laser1Current { get; set; }
             public int Laser1Temperature { get; set; } // ℃
 
             // Laser2 电流值 (mA)
-            public string Laser2Current { get; set; } = string.Empty;
+            public int Laser2Current { get; set; }
             public int Laser2Temperature { get; set; } // ℃
 
-            // Laser3 电流值 (mA) - 协议中未明确定义，保留
-            public string Laser3Current { get; set; } = string.Empty;
+            // Laser3 电流值 (mA)
+            public int Laser3Current { get; set; }
             public int Laser3Temperature { get; set; } // ℃
 
             // Laser4 电流值 (mA)
-            public string Laser4Current { get; set; } = string.Empty;
+            public int Laser4Current { get; set; }
             public int Laser4Temperature { get; set; } // ℃
 
             // 按键状态 (Byte41)
@@ -1004,7 +1004,7 @@ namespace Simscop.Hardware.CNI.FourChannel
             public bool Key5State { get; set; }
 
             // 预热状态 (Byte42): 0=预热中, 1=完成, 2=系统错误
-            public int PreheatState { get; set; }
+            public PreheatStatus PreheatState { get; set; }
 
             // 互锁状态 (Byte43): 0=正常, 1=错误
             public bool InterlockError { get; set; }
@@ -1017,39 +1017,103 @@ namespace Simscop.Hardware.CNI.FourChannel
             public bool Laser2OnOff { get; set; } // Byte60
             public bool Laser3OnOff { get; set; } // Byte61
             public bool Laser4OnOff { get; set; } // Byte62
+
+            public override string ToString()
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("=== 设备信息 ===");
+                sb.AppendLine($"Laser1: {(Laser1OnOff ? "ON" : "OFF")}, 电流={Laser1Current}mA, 温度={Laser1Temperature}°C");
+                sb.AppendLine($"Laser2: {(Laser2OnOff ? "ON" : "OFF")}, 电流={Laser2Current}mA, 温度={Laser2Temperature}°C");
+                sb.AppendLine($"Laser3: {(Laser3OnOff ? "ON" : "OFF")}, 电流={Laser3Current}mA, 温度={Laser3Temperature}°C");
+                sb.AppendLine($"Laser4: {(Laser4OnOff ? "ON" : "OFF")}, 电流={Laser4Current}mA, 温度={Laser4Temperature}°C");
+                sb.AppendLine($"预热状态: {PreheatState}");
+                sb.AppendLine($"互锁状态: {(InterlockError ? "错误" : "正常")}");
+                sb.AppendLine($"急停状态: {(EstopError ? "触发" : "正常")}");
+                sb.AppendLine($"按键状态: K1={Key1State} K2={Key2State} K3={Key3State} K4={Key4State} K5={Key5State}");
+                return sb.ToString();
+            }
         }
 
+        /// <summary>
+        /// 解析设备信息（修复版本）
+        /// </summary>
         private static DeviceInfo ParseDeviceInfo(byte[] response)
         {
             var info = new DeviceInfo();
 
             if (response.Length < 86)
+            {
+                Console.WriteLine($"ParseDeviceInfo: Invalid response length {response.Length}, expected 86");
                 return info;
+            }
 
-            // 数据从 byte[4] 开始（前4字节是协议头）
+            // 验证帧头
+            if (response[0] != 0x41 || response[1] != 0x56 || response[2] != 0x0A || response[3] != 0x00)
+            {
+                Console.WriteLine($"ParseDeviceInfo: Invalid header [0x{response[0]:X2}, 0x{response[1]:X2}, 0x{response[2]:X2}, 0x{response[3]:X2}]");
+                return info;
+            }
+
+            // 验证帧尾
+            if (response[85] != 0x0D)
+            {
+                Console.WriteLine($"ParseDeviceInfo: Invalid footer 0x{response[85]:X2}, expected 0x0D");
+            }
+
+            // 验证校验和
+            int calculatedChecksum = 0;
+            for (int i = 0; i < 84; i++)
+            {
+                calculatedChecksum += response[i];
+            }
+            calculatedChecksum &= 0xFF;
+
+            if (response[84] != calculatedChecksum)
+            {
+                Console.WriteLine($"ParseDeviceInfo: Checksum mismatch. Expected 0x{calculatedChecksum:X2}, got 0x{response[84]:X2}");
+            }
+
+            // 数据从 byte[4] 开始（前4字节是协议头: 0x41, 0x56, 0x0A, 0x00）
+            // payload 是80字节的有效数据
             int dataOffset = 4;
 
             try
             {
-                // Laser1 电流值 (Byte1-6, 从高到低字节)
-                info.Laser1Current = Encoding.ASCII.GetString(response, dataOffset, 6).Trim();
+                // Laser1 电流值 (Byte 1-2, 高字节在前)
+                info.Laser1Current = (response[dataOffset + 0] << 8) | response[dataOffset + 1];
 
-                // Laser1 温度 (Byte13)
-                info.Laser1Temperature = response[dataOffset + 12];
+                // Byte 3-7 未使用 (NU)
 
-                // Laser2 电流值 (Byte14-19)
-                info.Laser2Current = Encoding.ASCII.GetString(response, dataOffset + 13, 6).Trim();
+                // Laser1 温度 (Byte 8)
+                info.Laser1Temperature = response[dataOffset + 7];
 
-                // Laser2 温度 (Byte27)
-                info.Laser2Temperature = response[dataOffset + 26];
+                // Laser2 电流值 (Byte 9-10, 高字节在前)
+                info.Laser2Current = (response[dataOffset + 8] << 8) | response[dataOffset + 9];
 
-                // Laser4 电流值 (Byte28-33)
-                info.Laser4Current = Encoding.ASCII.GetString(response, dataOffset + 27, 6).Trim();
+                // Byte 11-12 未使用 (NU)
 
-                // Laser4 温度 (Byte41)
-                info.Laser4Temperature = response[dataOffset + 40];
+                // Laser2 温度 (Byte 13)
+                info.Laser2Temperature = response[dataOffset + 12];
 
-                // 按键状态 (Byte41 的各个bit)
+                // Laser3 电流值 (Byte 14-15, 高字节在前) - 根据协议推测
+                info.Laser3Current = (response[dataOffset + 13] << 8) | response[dataOffset + 14];
+
+                // Byte 16-19 未使用
+
+                // Laser3 温度 (Byte 20)
+                info.Laser3Temperature = response[dataOffset + 19];
+
+                // Laser4 电流值 (Byte 21-22, 高字节在前) - 根据协议推测
+                info.Laser4Current = (response[dataOffset + 20] << 8) | response[dataOffset + 21];
+
+                // Byte 23-26 未使用
+
+                // Laser4 温度 (Byte 27)
+                info.Laser4Temperature = response[dataOffset + 26];
+
+                // Byte 28-40 大部分未使用
+
+                // 按键状态 (Byte 41, 索引 40)
                 byte keyState = response[dataOffset + 40];
                 info.Key1State = (keyState & 0x01) != 0;
                 info.Key2State = (keyState & 0x02) != 0;
@@ -1057,20 +1121,31 @@ namespace Simscop.Hardware.CNI.FourChannel
                 info.Key4State = (keyState & 0x08) != 0;
                 info.Key5State = (keyState & 0x10) != 0;
 
-                // 预热状态 (Byte42)
-                info.PreheatState = response[dataOffset + 41];
+                // 预热状态 (Byte 42, 索引 41)
+                int preheatValue = response[dataOffset + 41];
+                info.PreheatState = preheatValue switch
+                {
+                    0 => PreheatStatus.Preheating,
+                    1 => PreheatStatus.Finished,
+                    2 => PreheatStatus.SystemError,
+                    _ => PreheatStatus.Unknown
+                };
 
-                // 互锁状态 (Byte43)
+                // 互锁状态 (Byte 43, 索引 42)
                 info.InterlockError = response[dataOffset + 42] != 0;
 
-                // 急停状态 (Byte44)
+                // 急停状态 (Byte 44, 索引 43)
                 info.EstopError = response[dataOffset + 43] != 0;
 
+                // Byte 45-58 未使用
+
                 // 激光器开关标志
-                info.Laser1OnOff = response[dataOffset + 58] != 0; // Byte59
-                info.Laser2OnOff = response[dataOffset + 59] != 0; // Byte60
-                info.Laser3OnOff = response[dataOffset + 60] != 0; // Byte61
-                info.Laser4OnOff = response[dataOffset + 61] != 0; // Byte62
+                info.Laser1OnOff = response[dataOffset + 58] != 0; // Byte 59
+                info.Laser2OnOff = response[dataOffset + 59] != 0; // Byte 60
+                info.Laser3OnOff = response[dataOffset + 60] != 0; // Byte 61
+                info.Laser4OnOff = response[dataOffset + 61] != 0; // Byte 62
+
+                // Byte 63-80 未使用
             }
             catch (Exception ex)
             {
@@ -1080,6 +1155,7 @@ namespace Simscop.Hardware.CNI.FourChannel
             return info;
         }
 
+        #region Enums
 
         public enum ChannelEnum
         {
@@ -1109,5 +1185,14 @@ namespace Simscop.Hardware.CNI.FourChannel
             InternalControl = 1,
         }
 
+        public enum PreheatStatus
+        {
+            Preheating = 0,
+            Finished = 1,
+            SystemError = 2,
+            Unknown = -1
+        }
+
+        #endregion
     }
 }
