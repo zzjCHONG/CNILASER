@@ -1,4 +1,5 @@
-﻿using Simscop.Pl.Core.Constants;
+﻿using Simscop.Hardware.CNI.FourChannel;
+using Simscop.Pl.Core.Constants;
 using Simscop.Pl.Core.Hardwares.Interfaces;
 
 namespace CNILaser.Core
@@ -86,5 +87,12 @@ namespace CNILaser.Core
         {
             return true;
         }
+
+        public bool GetDeviceInfo(out CNI.DeviceInfo? deviceInfo)
+        {
+            deviceInfo=new CNI.DeviceInfo();
+            return true;
+        }
+
     }
 }

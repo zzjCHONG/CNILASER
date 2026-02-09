@@ -983,17 +983,17 @@ namespace Simscop.Hardware.CNI.FourChannel
         {
             // Laser1 电流值 (mA) - Byte 1-2
             public int Laser1Current { get; set; }
-            // Laser1 温度 (℃) - Byte 8
+            // Laser1 温度 (℃) - Byte 5
             public int Laser1Temperature { get; set; }
 
-            // Laser2 电流值 (mA) - Byte 9-10
+            // Laser2 电流值 (mA) - Byte 6-7
             public int Laser2Current { get; set; }
-            // Laser2 温度 (℃) - Byte 13
+            // Laser2 温度 (℃) - Byte 10
             public int Laser2Temperature { get; set; }
 
             // Laser4 电流值 (mA) - Byte 16-17 (注意：协议中没有Laser3，直接是Laser4)
             public int Laser4Current { get; set; }
-            // Laser4 温度 (℃) - Byte 27
+            // Laser4 温度 (℃) - Byte 20
             public int Laser4Temperature { get; set; }
 
             // 按键状态 (Byte 41): 0=off, 1=on
@@ -1068,33 +1068,22 @@ namespace Simscop.Hardware.CNI.FourChannel
                 // Byte 1-2: Laser1 电流值 (高字节在前, mA)
                 info.Laser1Current = (data[0] << 8) | data[1];
 
-                // Byte 3-7: NU (未使用)
-
-                // Byte 8: Laser1 温度 (℃)
-                info.Laser1Temperature = data[7];
+                // Byte 5: Laser1 温度 (℃)
+                info.Laser1Temperature = data[4];
 
                 // ==================== Laser2 数据 ====================
-                // Byte 9-10: Laser2 电流值 (高字节在前, mA)
-                info.Laser2Current = (data[8] << 8) | data[9];
+                // Byte 6-7: Laser2 电流值 (高字节在前, mA)
+                info.Laser2Current = (data[5] << 8) | data[6];
 
-                // Byte 11-12: NU (未使用)
-
-                // Byte 13: Laser2 温度 (℃)
-                info.Laser2Temperature = data[12];
+                // Byte 10: Laser2 温度 (℃)
+                info.Laser2Temperature = data[9];
 
                 // ==================== Laser4 数据 ====================
-                // Byte 14-15: NU (未使用) - 注意：这里没有Laser3
-
                 // Byte 16-17: Laser4 电流值 (高字节在前, mA)
-                // 根据协议表格，Laser4 current 从 Byte16 开始
                 info.Laser4Current = (data[15] << 8) | data[16];
 
-                // Byte 18-26: NU (未使用)
-
-                // Byte 27: Laser4 温度 (℃)
-                info.Laser4Temperature = data[26];
-
-                // ==================== Byte 28-40: 全部 NU ====================
+                // Byte 20: Laser4 温度 (℃)
+                info.Laser4Temperature = data[19];
 
                 // ==================== 状态字节 ====================
                 // Byte 41 (data[40]): 按键状态
@@ -1120,8 +1109,6 @@ namespace Simscop.Hardware.CNI.FourChannel
                 // 0=正常, 1=错误
                 info.EstopError = data[43] != 0;
 
-                // ==================== Byte 45-58: 全部 NU ====================
-
                 // ==================== 激光器开关标志 ====================
                 // Byte 59 (data[58]): Laser1 开关标志
                 info.Laser1OnOff = data[58] != 0;
@@ -1135,17 +1122,20 @@ namespace Simscop.Hardware.CNI.FourChannel
                 // Byte 62 (data[61]): Laser4 开关标志
                 info.Laser4OnOff = data[61] != 0;
 
-                // ==================== Byte 63-80: 全部 NU ====================
+                bool isOutputDebug = false;
+                if (isOutputDebug)
+                {
+                    // 输出调试信息
+                    Console.WriteLine($"=== Device Info Parsed ===");
+                    Console.WriteLine($"Laser1: Current={info.Laser1Current}mA, Temp={info.Laser1Temperature}℃, OnOff={info.Laser1OnOff}");
+                    Console.WriteLine($"Laser2: Current={info.Laser2Current}mA, Temp={info.Laser2Temperature}℃, OnOff={info.Laser2OnOff}");
+                    Console.WriteLine($"Laser3: Current= N/A mA, Temp= N/A ℃,OnOff={info.Laser3OnOff}");
+                    Console.WriteLine($"Laser4: Current={info.Laser4Current}mA, Temp={info.Laser4Temperature}℃, OnOff={info.Laser4OnOff}");
+                    Console.WriteLine($"KeyState={info.KeyState}, PreheatState={info.PreheatState}");
+                    Console.WriteLine($"InterlockError={info.InterlockError}, EstopError={info.EstopError}");
+                    Console.WriteLine($"========================");
+                }
 
-                // 输出调试信息
-                Console.WriteLine($"=== Device Info Parsed ===");
-                Console.WriteLine($"Laser1: Current={info.Laser1Current}mA, Temp={info.Laser1Temperature}℃, OnOff={info.Laser1OnOff}");
-                Console.WriteLine($"Laser2: Current={info.Laser2Current}mA, Temp={info.Laser2Temperature}℃, OnOff={info.Laser2OnOff}");
-                Console.WriteLine($"Laser3: OnOff={info.Laser3OnOff}");
-                Console.WriteLine($"Laser4: Current={info.Laser4Current}mA, Temp={info.Laser4Temperature}℃, OnOff={info.Laser4OnOff}");
-                Console.WriteLine($"KeyState={info.KeyState}, PreheatState={info.PreheatState}");
-                Console.WriteLine($"InterlockError={info.InterlockError}, EstopError={info.EstopError}");
-                Console.WriteLine($"========================");
             }
             catch (Exception ex)
             {

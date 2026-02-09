@@ -40,7 +40,6 @@ namespace Simscop.Hardware.CNI.FourChannel
                 {
                     Console.WriteLine($"  Laser1: {(info.Laser1OnOff ? "ON " : "OFF")} | Current: {info.Laser1Current,4} mA | Temp: {info.Laser1Temperature,3}°C");
                     Console.WriteLine($"  Laser2: {(info.Laser2OnOff ? "ON " : "OFF")} | Current: {info.Laser2Current,4} mA | Temp: {info.Laser2Temperature,3}°C");
-                    //Console.WriteLine($"  Laser3: {(info.Laser3OnOff ? "ON " : "OFF")} | Current: {info.Laser3Current,4} mA | Temp: {info.Laser3Temperature,3}°C");
                     Console.WriteLine($"  Laser4: {(info.Laser4OnOff ? "ON " : "OFF")} | Current: {info.Laser4Current,4} mA | Temp: {info.Laser4Temperature,3}°C");
                     Console.WriteLine($"  Preheat: {info.PreheatState}");
                     Console.WriteLine($"  Interlock: {(info.InterlockError ? "ERROR" : "OK")}");
@@ -334,5 +333,6 @@ namespace Simscop.Hardware.CNI.FourChannel
         {
             _cni?.Dispose();
         }
+
     }
 }

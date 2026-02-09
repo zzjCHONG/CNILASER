@@ -98,7 +98,8 @@ namespace CNILaser
 
         private void Info_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-
+            var paramWindow = Global.ServiceProvider?.GetService<ParamWindow>();
+            paramWindow!.Show();
         }
     }
 }

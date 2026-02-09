@@ -1,4 +1,5 @@
-﻿using Simscop.Pl.Core.Constants;
+﻿using Simscop.Hardware.CNI.FourChannel;
+using Simscop.Pl.Core.Constants;
 
 namespace Simscop.Pl.Core.Hardwares.Interfaces
 {
@@ -111,6 +112,13 @@ namespace Simscop.Pl.Core.Hardwares.Interfaces
         /// <param name="index"></param>
         /// <returns></returns>
         public bool SetControlMode(int index);
+
+        /// <summary>
+        /// 获取激光设备信息
+        /// </summary>
+        /// <param name="deviceInfo"></param>
+        /// <returns></returns>
+        public bool GetDeviceInfo(out CNI.DeviceInfo? deviceInfo);
 
     }
 }

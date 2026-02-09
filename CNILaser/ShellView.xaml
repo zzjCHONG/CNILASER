@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:CNILaser"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="500"
-    Height="355"
+    Height="360"
     ResizeMode="CanMinimize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -29,7 +29,7 @@
                     <MenuItem
                         x:Name="Info"
                         Click="Info_Click"
-                        Header="状态面板" />
+                        Header="参数面板" />
                     <Separator />
                     <MenuItem
                         x:Name="Exit"
@@ -106,7 +106,7 @@
             BorderBrush="Gray"
             BorderThickness="1"
             CornerRadius="8">
-            <local:CNILaserView Height="315" />
+            <local:CNILaserView />
         </Border>
     </StackPanel>
 

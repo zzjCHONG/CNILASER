@@ -1,5 +1,4 @@
-﻿using CNILaser.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Simscop.Hardware.CNI.FourChannel;
 using Simscop.Pl.Core.Hardwares.Interfaces;
 using Simscop.Spindisk.Wpf.Views;
@@ -63,6 +62,7 @@ namespace CNILaser
              .AddSingleton<VersionWindow>()
              .AddSingleton<ShellView>()
              .AddSingleton<ParamView>()
+             .AddSingleton<ParamWindow>()
 
              .BuildServiceProvider();
         }
