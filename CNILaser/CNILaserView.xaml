@@ -65,18 +65,16 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel1Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Press Enter to confirm" />
+                                ToolTip="Enter确认输入" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel1Command}"
-                                Content="↑"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↑" />
                             <Button
                                 Width="25"
                                 Margin="0"
                                 Command="{Binding DecreaseLaserChannel1Command}"
-                                Content="↓"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↓" />
                         </DockPanel>
 
                         <ToggleButton
@@ -137,18 +135,16 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel2Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Press Enter to confirm" />
+                                ToolTip="Enter确认输入" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel2Command}"
-                                Content="↑"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↑" />
 
                             <Button
                                 Width="25"
                                 Command="{Binding DecreaseLaserChannel2Command}"
-                                Content="↓"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↓" />
                         </DockPanel>
 
                         <ToggleButton
@@ -209,17 +205,15 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel3Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Press Enter to confirm" />
+                                ToolTip="Enter确认输入" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel3Command}"
-                                Content="↑"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↑" />
                             <Button
                                 Width="25"
                                 Command="{Binding DecreaseLaserChannel3Command}"
-                                Content="↓"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↓" />
                         </DockPanel>
 
                         <ToggleButton
@@ -280,17 +274,15 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel4Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Press Enter to confirm" />
+                                ToolTip="Enter确认输入" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel4Command}"
-                                Content="↑"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↑" />
                             <Button
                                 Width="25"
                                 Command="{Binding DecreaseLaserChannel4Command}"
-                                Content="↓"
-                                IsEnabled="{Binding IsButtonEnabled}" />
+                                Content="↓" />
                         </DockPanel>
 
                         <ToggleButton
@@ -328,12 +320,12 @@
             <Button
                 HorizontalAlignment="Stretch"
                 Command="{Binding InitManualCommand}"
-                Content="Manual Connect"
+                Content="手动连接"
                 IsEnabled="{Binding IsOperable}" />
             <Button
                 HorizontalAlignment="Stretch"
                 Command="{Binding InitCommand}"
-                Content="Auto Connect"
+                Content="自动连接"
                 IsEnabled="{Binding IsOperable}" />
         </UniformGrid>
     </StackPanel>

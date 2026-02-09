@@ -11,7 +11,7 @@ namespace Simscop.Hardware.CNI.FourChannel
         private string? _portName;
         private readonly ManualResetEventSlim _dataReceivedEvent = new(false);
         private byte[] _receivedDataforValid = Array.Empty<byte>();
-        private readonly int _validTimeout = 1000;
+        private readonly int _validTimeout = 300;
 
         public CNI()
         {
@@ -535,7 +535,7 @@ namespace Simscop.Hardware.CNI.FourChannel
 
                 var bytes = GenerateSettingBytes(ChannelEnum.ReadInformation, CommandEnum.Read);
 
-                var (ok, response) = await SendCommandAsync(bytes, 2000); // 更长的超时时间
+                var (ok, response) = await SendCommandAsync(bytes, _sendcommandTimeout);
                 if (ok && response.Length >= 86) // 0x41 + 0x56(86) + 0x0A + 0x00 + 80字节数据 + checksum + 0x0D
                 {
                     var info = ParseDeviceInfo(response);
@@ -610,6 +610,7 @@ namespace Simscop.Hardware.CNI.FourChannel
 
     public partial class CNI
     {
+        private readonly int _sendcommandTimeout = 1000;
         private readonly byte[] commandBase = new byte[8] { 0x53, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
         private readonly byte[] responseforSetting = new byte[9] { 0x41, 0x09, 0x00, 0x01, 0x4F, 0x4B, 0x21, 0x00, 0x0D };
         private readonly byte[] responseforReading = new byte[8] { 0x41, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
@@ -617,7 +618,7 @@ namespace Simscop.Hardware.CNI.FourChannel
         private TaskCompletionSource<byte[]>? _commandTcs;
         private byte[] _receiveBuffer = Array.Empty<byte>();
 
-        private ManualResetEventSlim _waitHandle = new(false);
+        private readonly ManualResetEventSlim _waitHandle = new(false);
         private byte[] _lastResponse = Array.Empty<byte>();
 
         public async Task<(bool success, int value)> GetValueAsync(ChannelEnum channel)
@@ -633,7 +634,7 @@ namespace Simscop.Hardware.CNI.FourChannel
                 CommandEnum command = CommandEnum.Read;
                 var bytes = GenerateSettingBytes(channel, command);
 
-                var (ok, response) = await SendCommandAsync(bytes, 1500);
+                var (ok, response) = await SendCommandAsync(bytes, _sendcommandTimeout);
                 if (ok)
                 {
                     if (VerifyResponse(channel, command, response, out int value))
@@ -665,7 +666,7 @@ namespace Simscop.Hardware.CNI.FourChannel
                 CommandEnum command = CommandEnum.Write;
                 var bytes = GenerateSettingBytes(channel, command, value);
 
-                var (ok, response) = await SendCommandAsync(bytes, 1500);
+                var (ok, response) = await SendCommandAsync(bytes, _sendcommandTimeout);
                 if (ok)
                 {
                     if (VerifyResponse(channel, command, response, out _))
