@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:CNILaser"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="500"
-    Height="360"
+    Height="550"
     ResizeMode="CanMinimize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -25,36 +25,37 @@
                 <MenuItem
                     FontSize="13"
                     FontWeight="Bold"
-                    Header="系统">
+                    Header="System">
                     <MenuItem
                         x:Name="Info"
                         Click="Info_Click"
-                        Header="参数面板" />
+                        Header="Parameters"
+                        Visibility="Collapsed" />
                     <Separator />
                     <MenuItem
                         x:Name="Exit"
                         Click="Exit_Click"
-                        Header="退出" />
+                        Header="Exit" />
                 </MenuItem>
 
                 <MenuItem
                     FontSize="13"
                     FontWeight="Bold"
-                    Header="帮助">
+                    Header="Help">
                     <MenuItem
                         x:Name="UserManual"
                         Click="UserManual_Click"
-                        Header="用户手册" />
+                        Header="User Manual" />
                     <Separator />
                     <MenuItem
                         x:Name="CompanyWebsite"
                         Click="CompanyWebsite_Click"
-                        Header="公司网站" />
+                        Header="Company Website" />
                     <Separator />
                     <MenuItem
                         x:Name="About"
                         Click="About_Click"
-                        Header="关于软件" />
+                        Header="About" />
                 </MenuItem>
             </Menu>
 
@@ -101,6 +102,15 @@
     </liftui:Window.NonClientAreaContent>
 
     <StackPanel>
+
+        <Border
+            Margin="2"
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="8">
+            <local:ParamView />
+        </Border>
+
         <Border
             Margin="2"
             BorderBrush="Gray"
@@ -108,6 +118,7 @@
             CornerRadius="8">
             <local:CNILaserView />
         </Border>
+
     </StackPanel>
 
 </liftui:Window>

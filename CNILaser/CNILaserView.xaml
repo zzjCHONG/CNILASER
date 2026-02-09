@@ -19,7 +19,7 @@
                 <TextBlock
                     FontSize="12"
                     FontWeight="Bold"
-                    Text="激光设置-四通道" />
+                    Text="Laser Control" />
             </GroupBox.Header>
 
             <StackPanel>
@@ -65,7 +65,7 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel1Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Enter确认输入" />
+                                ToolTip="Press Enter to confirm" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel1Command}"
@@ -137,7 +137,7 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel2Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Enter确认输入" />
+                                ToolTip="Press Enter to confirm" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel2Command}"
@@ -209,7 +209,7 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel3Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Enter确认输入" />
+                                ToolTip="Press Enter to confirm" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel3Command}"
@@ -280,7 +280,7 @@
                                 HorizontalAlignment="Stretch"
                                 KeyDown="TextBox_KeyDown"
                                 Text="{Binding LaserChannel4Value, StringFormat={}{0:F0}, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                ToolTip="Enter确认输入" />
+                                ToolTip="Press Enter to confirm" />
                             <Button
                                 Width="25"
                                 Command="{Binding IncreaseLaserChannel4Command}"
@@ -328,12 +328,12 @@
             <Button
                 HorizontalAlignment="Stretch"
                 Command="{Binding InitManualCommand}"
-                Content="手动连接"
+                Content="Manual Connect"
                 IsEnabled="{Binding IsOperable}" />
             <Button
                 HorizontalAlignment="Stretch"
                 Command="{Binding InitCommand}"
-                Content="自动连接"
+                Content="Auto Connect"
                 IsEnabled="{Binding IsOperable}" />
         </UniformGrid>
     </StackPanel>
