@@ -18,7 +18,7 @@
         Header="Laser State"
         Style="{DynamicResource GroupBoxTab}">
 
-        <Grid >
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -156,28 +156,28 @@
                     Margin="5"
                     HorizontalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{Binding LaserChannel1Enable}" />
+                    Text="{Binding LaserChannel1State}" />
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="2"
                     Margin="5"
                     HorizontalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{Binding LaserChannel2Enable}" />
+                    Text="{Binding LaserChannel2State}" />
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="3"
                     Margin="5"
                     HorizontalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{Binding LaserChannel3Enable}" />
+                    Text="{Binding LaserChannel3State}" />
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="4"
                     Margin="5"
                     HorizontalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{Binding LaserChannel4Enable}" />
+                    Text="{Binding LaserChannel4State}" />
 
             </Grid>
 
@@ -188,7 +188,7 @@
                 Margin="0,5"
                 Columns="4">
 
-                <StackPanel Orientation="Horizontal" Margin="2,0">
+                <StackPanel Margin="2,0" Orientation="Horizontal">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
@@ -200,7 +200,7 @@
                         Text="{Binding LaserKeyState}" />
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="2,0">
+                <StackPanel Margin="2,0" Orientation="Horizontal">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
@@ -212,7 +212,7 @@
                         Text="{Binding LaserInterlockState}" />
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="2,0">
+                <StackPanel Margin="2,0" Orientation="Horizontal">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
@@ -224,7 +224,7 @@
                         Text="{Binding LaserEstopState}" />
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="2,0">
+                <StackPanel Margin="2,0" Orientation="Horizontal">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"

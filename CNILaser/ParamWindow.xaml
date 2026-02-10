@@ -6,8 +6,8 @@
     xmlns:liftui="https://github.com/pchuan98/Lift.UI"
     xmlns:local="clr-namespace:CNILaser"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Width="380"
-    Height="150"
+    Width="500"
+    Height="210"
     ResizeMode="CanMinimize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -19,7 +19,7 @@
                 FontSize="14"
                 FontWeight="Bold"
                 Foreground="#509CFF"
-                Text="参数面板" />
+                Text="Parameter Panel" />
 
         </StackPanel>
     </liftui:Window.NonClientAreaContent>

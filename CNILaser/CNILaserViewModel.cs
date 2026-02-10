@@ -619,6 +619,11 @@ namespace CNILaser
                 LaserChannel2Temperature = device.Laser2Temperature;
                 LaserChannel4Temperature = device.Laser4Temperature;
 
+                LaserChannel1State = device.Laser1OnOff ? "ON" : "OFF";
+                LaserChannel2State = device.Laser2OnOff ? "ON" : "OFF";
+                LaserChannel3State = device.Laser3OnOff ? "ON" : "OFF";
+                LaserChannel4State = device.Laser4OnOff ? "ON" : "OFF";
+
                 LaserKeyState = device.KeyState ? "ON" : "OFF";
                 LaserPreheatState = device.PreheatState.ToString();
                 LaserEstopState = device.EstopError ? "Error" : "OK";
@@ -654,6 +659,18 @@ namespace CNILaser
 
         [ObservableProperty]
         private double laserChannel4Temperature = -1;
+
+        [ObservableProperty]
+        private string laserChannel1State = "N/A";
+
+        [ObservableProperty]
+        private string laserChannel2State = "N/A";
+
+        [ObservableProperty]
+        private string laserChannel3State = "N/A";
+
+        [ObservableProperty]
+        private string laserChannel4State = "N/A";
 
         [ObservableProperty]
         private string laserKeyState = "N/A";

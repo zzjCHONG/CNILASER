@@ -30,7 +30,7 @@
                         x:Name="Info"
                         Click="Info_Click"
                         Header="Parameters"
-                        Visibility="Collapsed" />
+                        Visibility="Visible" />
                     <Separator />
                     <MenuItem
                         x:Name="Exit"
@@ -112,6 +112,7 @@
         </Border>
 
         <Border
+         
             Margin="2"
             BorderBrush="Gray"
             BorderThickness="1"
