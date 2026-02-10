@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics;
 using System.IO.Ports;
 using System.Management;
-using System.Text;
 
 namespace Simscop.Hardware.CNI.FourChannel
 {
     public partial class CNI
     {
-        private readonly SerialPort? _serialPort;
+        private SerialPort? _serialPort;
         private string? _portName;
         private readonly ManualResetEventSlim _dataReceivedEvent = new(false);
         private byte[] _receivedDataforValid = Array.Empty<byte>();
@@ -15,7 +14,12 @@ namespace Simscop.Hardware.CNI.FourChannel
 
         public CNI()
         {
-            _serialPort = new SerialPort()
+            _serialPort = CreateSerialPort();
+        }
+
+        private static SerialPort CreateSerialPort()
+        {
+            return new SerialPort()
             {
                 BaudRate = 115200,
                 StopBits = StopBits.One,
@@ -24,13 +28,38 @@ namespace Simscop.Hardware.CNI.FourChannel
             };
         }
 
-        public bool Connect(string com = "")
+        private void ResetSerialPort()
         {
+            if (_serialPort != null)
+            {
+                try
+                {
+                    _serialPort.DataReceived -= SerialPort_DataReceived;
+                    _serialPort.DataReceived -= SerialPort_DataReceived_Valid;
+                    if (_serialPort.IsOpen) _serialPort.Close();
+                    _serialPort.Dispose();
+                }
+                catch { }
+            }
+
+            _serialPort = CreateSerialPort();
+            _portName = string.Empty;
+        }
+
+        public bool Connect(out string? currentCom, string com = "")
+        {
+            currentCom = string.Empty;
+
+            // 确保旧实例完全释放，创建新实例
+            ResetSerialPort();
+
             if (Valid(com))
             {
                 Console.WriteLine($"CNI Connected: {_portName}");
                 _serialPort!.Open();
                 _serialPort.DataReceived += SerialPort_DataReceived;
+
+                currentCom = _portName;
                 return true;
             }
             return false;
@@ -151,6 +180,12 @@ namespace Simscop.Hardware.CNI.FourChannel
             finally
             {
                 _serialPort!.DataReceived -= SerialPort_DataReceived_Valid;
+
+                // 确保校验结束后串口是关闭的（Connect 会重新打开）
+                if (_serialPort.IsOpen)
+                {
+                    try { _serialPort.Close(); } catch { }
+                }
             }
         }
 
@@ -181,11 +216,12 @@ namespace Simscop.Hardware.CNI.FourChannel
                 return false;
             }
 
-            SerialPort port = new(portName);
+            SerialPort? port = null;
             try
             {
+                port = new SerialPort(portName);
                 port.Open();
-                if (port.IsOpen) port.Close();
+                port.Close();
                 return true;
             }
             catch (UnauthorizedAccessException)
@@ -197,6 +233,10 @@ namespace Simscop.Hardware.CNI.FourChannel
             {
                 Console.WriteLine($"打开串口 {portName} 发生错误: {ex.Message}");
                 return false;
+            }
+            finally
+            {
+                port?.Dispose();
             }
         }
 

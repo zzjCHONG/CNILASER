@@ -9,7 +9,7 @@
     Width="380"
     Height="240"
     ResizeMode="NoResize"
-    WindowStartupLocation="CenterOwner"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
     <liftui:Window.NonClientAreaContent>

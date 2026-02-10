@@ -28,13 +28,13 @@ namespace Simscop.Hardware.CNI.FourChannel
         {
             try
             {
-                if (!_cni.Connect(com))
+                if (!_cni.Connect(out var currentCom, com))
                 {
                     Console.WriteLine("CNI Laser initialization failed");
                     return false;
                 }
 
-                CurrentPortname=com;
+                CurrentPortname= currentCom;
 
                 // 填充基本设备信息到 InfoDirectory
                 InfoDirectory[InfoEnum.Model] = "CNI Four Channel Laser";

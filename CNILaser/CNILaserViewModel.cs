@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Simscop.Hardware.CNI.FourChannel;
 using Simscop.Pl.Core.Hardwares.Interfaces;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -75,8 +76,10 @@ namespace CNILaser
                         Application.Current?.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show(Application.Current.MainWindow,
-                                $"串口 {currentPortname} 已断开，请检查连接后重新连接！",
-                                "连接断开", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                $"Serial port {currentPortname} has been disconnected. Please check the connection and try again!",
+                                "Connection Lost",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
                         });
                     }
 
@@ -112,8 +115,13 @@ namespace CNILaser
 
             if (IsConnected)
             {
-                //currentPortname = SerialComs?[SerialIndex];
-                currentPortname=_CNILaser!.CurrentPortname;
+                // 从底层获取实际连接的端口名
+                if (_CNILaser is CNIFourChannelLaser cniLaser && !string.IsNullOrEmpty(cniLaser.CurrentPortname))
+                {
+                    currentPortname = cniLaser.CurrentPortname;
+                    var index = SerialComs?.IndexOf(currentPortname) ?? -1;
+                    if (index >= 0) SerialIndex = index;
+                }
 
                 Application.Current?.Dispatcher.Invoke(() =>
                 {
@@ -142,8 +150,8 @@ namespace CNILaser
 
             if (IsConnected)
             {
-                // currentPortname = SerialComs?[SerialIndex];
-                currentPortname = _CNILaser!.CurrentPortname;
+                currentPortname = com;
+                // SerialIndex 已经是用户选的，无需更新
 
                 Application.Current?.Dispatcher.Invoke(() =>
                 {
