@@ -53,12 +53,15 @@ namespace Simscop.Hardware.CNI.FourChannel
             _serialPort?.Dispose();
             _dataReceivedEvent?.Dispose();
             _waitHandle?.Dispose();
+            _serialLock?.Dispose();
         }
 
         ~CNI() => Dispose();
 
         private bool Valid(string com)
         {
+            _portName = string.Empty;
+
             try
             {
                 bool isAutoMode = com == "";
@@ -231,6 +234,8 @@ namespace Simscop.Hardware.CNI.FourChannel
 
     public partial class CNI
     {
+        private const int sendcommandTimeout = 300;
+
         public int VerifyLaserChannel1 { get; private set; } = 0;
         public int VerifyLaserChannel2 { get; private set; } = 0;
         public int VerifyLaserChannel3 { get; private set; } = 0;
@@ -578,7 +583,6 @@ namespace Simscop.Hardware.CNI.FourChannel
         /// </summary>
         public bool ReadDeviceInfo(out DeviceInfo? info)
         {
-            Stopwatch sw = Stopwatch.StartNew();
             info = null;
             try
             {
@@ -588,27 +592,30 @@ namespace Simscop.Hardware.CNI.FourChannel
                     return false;
                 }
 
-                var bytes = GenerateSettingBytes(ChannelEnum.ReadInformation, CommandEnum.Read);
-                _serialPort.Write(bytes, 0, bytes.Length);
-                byte[] response = WaitResponse(2000);
-
-                if (response.Length >= 86)
+                _serialLock.Wait();
+                try
                 {
-                    info = ParseDeviceInfo(response);
-                    return true;
-                }
+                    var bytes = GenerateSettingBytes(ChannelEnum.ReadInformation, CommandEnum.Read);
+                    _serialPort.Write(bytes, 0, bytes.Length);
+                    byte[] response = WaitResponse(sendcommandTimeout);
 
-                return false;
+                    if (response.Length >= 86)
+                    {
+                        info = ParseDeviceInfo(response);
+                        return true;
+                    }
+
+                    return false;
+                }
+                finally
+                {
+                    _serialLock.Release();
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"ReadDeviceInfo Error: {ex.Message}");
                 return false;
-            }
-            finally
-            {
-                sw.Stop();
-                Debug.WriteLine(sw.ElapsedMilliseconds + "ms");
             }
         }
 
@@ -625,6 +632,7 @@ namespace Simscop.Hardware.CNI.FourChannel
         private byte[] _receiveBuffer = Array.Empty<byte>();
 
         private readonly ManualResetEventSlim _waitHandle = new(false);
+        private readonly SemaphoreSlim _serialLock = new(1, 1);
         private byte[] _lastResponse = Array.Empty<byte>();
 
         public async Task<(bool success, int value)> GetValueAsync(ChannelEnum channel)
@@ -696,23 +704,31 @@ namespace Simscop.Hardware.CNI.FourChannel
             if (!_serialPort!.IsOpen)
                 throw new InvalidOperationException("串口未打开");
 
-            _commandTcs = new TaskCompletionSource<byte[]>();
-            _receiveBuffer = Array.Empty<byte>();
-
-            Console.WriteLine($"[SEND] {BitConverter.ToString(command)}");
-            _serialPort.Write(command, 0, command.Length);
-
-            var completedTask = await Task.WhenAny(_commandTcs.Task, Task.Delay(timeoutMs));
-            if (completedTask == _commandTcs.Task)
+            await _serialLock.WaitAsync();
+            try
             {
-                byte[] response = _commandTcs.Task.Result;
-                Console.WriteLine($"[RECV] {BitConverter.ToString(response)}");
-                return (true, response);
+                _commandTcs = new TaskCompletionSource<byte[]>();
+                _receiveBuffer = Array.Empty<byte>();
+
+                Console.WriteLine($"[SEND] {BitConverter.ToString(command)}");
+                _serialPort.Write(command, 0, command.Length);
+
+                var completedTask = await Task.WhenAny(_commandTcs.Task, Task.Delay(timeoutMs));
+                if (completedTask == _commandTcs.Task)
+                {
+                    byte[] response = _commandTcs.Task.Result;
+                    Console.WriteLine($"[RECV] {BitConverter.ToString(response)}");
+                    return (true, response);
+                }
+                else
+                {
+                    Console.WriteLine($"[TIMEOUT] Command timeout");
+                    return (false, Array.Empty<byte>());
+                }
             }
-            else
+            finally
             {
-                Console.WriteLine($"[TIMEOUT] Command timeout");
-                return (false, Array.Empty<byte>());
+                _serialLock.Release();
             }
         }
 
@@ -764,19 +780,27 @@ namespace Simscop.Hardware.CNI.FourChannel
                     return false;
                 }
 
-                CommandEnum command = CommandEnum.Read;
-                var bytes = GenerateSettingBytes(channel, command);
-
-                _serialPort.Write(bytes, 0, bytes.Length);
-                byte[] response = WaitResponse(1500);
-
-                if (response.Length > 0 && VerifyResponse(channel, command, response, out value))
+                _serialLock.Wait();
+                try
                 {
-                    UpdateVerifyValue(channel, value);
-                    return true;
-                }
+                    CommandEnum command = CommandEnum.Read;
+                    var bytes = GenerateSettingBytes(channel, command);
 
-                return false;
+                    _serialPort.Write(bytes, 0, bytes.Length);
+                    byte[] response = WaitResponse(sendcommandTimeout);
+
+                    if (response.Length > 0 && VerifyResponse(channel, command, response, out value))
+                    {
+                        UpdateVerifyValue(channel, value);
+                        return true;
+                    }
+
+                    return false;
+                }
+                finally
+                {
+                    _serialLock.Release();
+                }
             }
             catch (Exception ex)
             {
@@ -796,19 +820,27 @@ namespace Simscop.Hardware.CNI.FourChannel
                     return false;
                 }
 
-                CommandEnum command = CommandEnum.Write;
-                var bytes = GenerateSettingBytes(channel, command, value);
-
-                _serialPort.Write(bytes, 0, bytes.Length);
-                byte[] response = WaitResponse(1500);
-
-                if (response.Length > 0 && VerifyResponse(channel, command, response, out _))
+                _serialLock.Wait();
+                try
                 {
-                    UpdateVerifyValue(channel, value);
-                    return true;
-                }
+                    CommandEnum command = CommandEnum.Write;
+                    var bytes = GenerateSettingBytes(channel, command, value);
 
-                return false;
+                    _serialPort.Write(bytes, 0, bytes.Length);
+                    byte[] response = WaitResponse(sendcommandTimeout);
+
+                    if (response.Length > 0 && VerifyResponse(channel, command, response, out _))
+                    {
+                        UpdateVerifyValue(channel, value);
+                        return true;
+                    }
+
+                    return false;
+                }
+                finally
+                {
+                    _serialLock.Release();
+                }
             }
             catch (Exception ex)
             {

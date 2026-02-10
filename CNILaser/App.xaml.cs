@@ -71,8 +71,8 @@ namespace CNILaser
         {
             base.OnStartup(e);
 
-            AllocConsole();  // 创建控制台窗口
-            Console.WriteLine("Console window is now open.");
+            //AllocConsole();  // 创建控制台窗口
+            //Console.WriteLine("Console window is now open.");
 
             var splash = Global.ServiceProvider!.GetService<ShellView>();
             splash?.Show();

@@ -11,6 +11,8 @@ namespace Simscop.Hardware.CNI.FourChannel
         public Dictionary<InfoEnum, string> InfoDirectory { get; private set; }
         public string DevicesName { get; set; } = "CNI Four Channel Laser";
 
+        public string? CurrentPortname { get; set; }
+
         public CNIFourChannelLaser()
         {
             _cni = new CNI();
@@ -31,6 +33,8 @@ namespace Simscop.Hardware.CNI.FourChannel
                     Console.WriteLine("CNI Laser initialization failed");
                     return false;
                 }
+
+                CurrentPortname=com;
 
                 // 填充基本设备信息到 InfoDirectory
                 InfoDirectory[InfoEnum.Model] = "CNI Four Channel Laser";

@@ -15,6 +15,8 @@ namespace CNILaser.Core
 
         public string DevicesName { get; set; } = "FakeLaser";
 
+        public string CurrentPortname => "COM1";
+
         private int power = 44;
 
         public bool GetPower(int count, out int value)

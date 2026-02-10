@@ -46,7 +46,7 @@
                                 IsSnapToTickEnabled="True"
                                 Maximum="100"
                                 TickFrequency="1"
-                                Value="{Binding LaserChannel1Value, Delay=200}">
+                                Value="{Binding LaserChannel1Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Offset="0" Color="#53aea0" />
@@ -116,7 +116,7 @@
                                 IsSnapToTickEnabled="True"
                                 Maximum="100"
                                 TickFrequency="1"
-                                Value="{Binding LaserChannel2Value, Delay=200}">
+                                Value="{Binding LaserChannel2Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Offset="0" Color="#479546" />
@@ -186,7 +186,7 @@
                                 IsSnapToTickEnabled="True"
                                 Maximum="100"
                                 TickFrequency="1"
-                                Value="{Binding LaserChannel3Value, Delay=200}">
+                                Value="{Binding LaserChannel3Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Offset="0" Color="#a4251c" />
@@ -255,7 +255,7 @@
                                 IsSnapToTickEnabled="True"
                                 Maximum="100"
                                 TickFrequency="1"
-                                Value="{Binding LaserChannel4Value, Delay=200}">
+                                Value="{Binding LaserChannel4Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Offset="0" Color="#872083" />

@@ -14,7 +14,7 @@ namespace CNILaser
     {
         private readonly ILaser? _CNILaser;
         private readonly System.Timers.Timer? _timerComs;
-        private static readonly string? currentPortname;
+        private static string? currentPortname;
         private readonly DispatcherTimer? _timer;
         private readonly DispatcherTimer? _timerState;
 
@@ -34,7 +34,7 @@ namespace CNILaser
             _timer = new DispatcherTimer(priority: DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(100) };
             _timer.Tick += Timer_Tick;
 
-            _timerState = new DispatcherTimer(priority: DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(500) };
+            _timerState = new DispatcherTimer(priority: DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(200) };
             _timerState.Tick += TimerState_Tick;
         }
 
@@ -60,6 +60,26 @@ namespace CNILaser
                     && !SerialComs.Except(com).Any() && !com.Except(SerialComs).Any();
                 if (!areEqual)
                 {
+                    // 检测当前连接的串口是否被拔出
+                    if (IsConnected && !string.IsNullOrEmpty(currentPortname) && !com.Contains(currentPortname))
+                    {
+                        IsConnected = false;
+
+                        // 停止定时器
+                        Application.Current?.Dispatcher.Invoke(() =>
+                        {
+                            _timer?.Stop();
+                            _timerState?.Stop();
+                        });
+
+                        Application.Current?.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(Application.Current.MainWindow,
+                                $"串口 {currentPortname} 已断开，请检查连接后重新连接！",
+                                "连接断开", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        });
+                    }
+
                     SerialComs = new();
                     SerialComs.AddRange(com);
                     if (SerialComs.Count != 0)
@@ -74,9 +94,6 @@ namespace CNILaser
                             SerialIndex = SerialComs.Count - 1;
                         }
                     }
-
-                    if (!SerialComs.Contains(currentPortname!) && !string.IsNullOrEmpty(currentPortname))
-                        IsConnected = false;
                 }
             }
             catch (Exception ex)
@@ -95,6 +112,9 @@ namespace CNILaser
 
             if (IsConnected)
             {
+                //currentPortname = SerialComs?[SerialIndex];
+                currentPortname=_CNILaser!.CurrentPortname;
+
                 Application.Current?.Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show(Application.Current.MainWindow, $"Connected successfully!", "Connection", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -122,6 +142,9 @@ namespace CNILaser
 
             if (IsConnected)
             {
+                // currentPortname = SerialComs?[SerialIndex];
+                currentPortname = _CNILaser!.CurrentPortname;
+
                 Application.Current?.Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show(Application.Current.MainWindow, $"Connected successfully!", "Connection", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -142,6 +165,7 @@ namespace CNILaser
         {
             if (IsConnected)
             {
+                #region 模式
                 if (!_CNILaser!.GetControlMode(out int modeIndex))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -151,8 +175,14 @@ namespace CNILaser
                 }
                 else
                 {
+                    _isSettingControlMode = true;
                     ControlModeIndex = modeIndex;
+                    _isSettingControlMode = false;
                 }
+
+                #endregion
+
+                #region 状态初始化
 
                 if (!await _CNILaser.SetStateAsync(1, false))
                 {
@@ -190,6 +220,10 @@ namespace CNILaser
                 }
                 else { LaserChannel4Enable = false; }
 
+                #endregion
+
+                #region 激光数值
+
                 if (!_CNILaser.GetPower(1, out var power1))
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
@@ -197,7 +231,12 @@ namespace CNILaser
                         MessageBox.Show(Application.Current.MainWindow, "GetPower Channel1 Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
                     });
                 }
-                else { LaserChannel1Value = power1; }
+                else
+                {
+                    _isSettingPower1 = true;
+                    LaserChannel1Value = power1;
+                    _isSettingPower1 = false;
+                }
 
                 if (!_CNILaser.GetPower(2, out var power2))
                 {
@@ -206,7 +245,12 @@ namespace CNILaser
                         MessageBox.Show(Application.Current.MainWindow, "GetPower Channel2 Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
                     });
                 }
-                else { LaserChannel2Value = power2; }
+                else
+                {
+                    _isSettingPower2 = true;
+                    LaserChannel2Value = power2;
+                    _isSettingPower2 = false;
+                }
 
                 if (!_CNILaser.GetPower(3, out var power3))
                 {
@@ -215,7 +259,12 @@ namespace CNILaser
                         MessageBox.Show(Application.Current.MainWindow, "GetPower Channel3 Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
                     });
                 }
-                else { LaserChannel3Value = power3; }
+                else
+                {
+                    _isSettingPower3 = true;
+                    LaserChannel3Value = power3;
+                    _isSettingPower3 = false;
+                }
 
                 if (!_CNILaser.GetPower(4, out var power4))
                 {
@@ -224,17 +273,21 @@ namespace CNILaser
                         MessageBox.Show(Application.Current.MainWindow, "GetPower Channel4 Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
                     });
                 }
-                else { LaserChannel4Value = power4; }
+                else
+                {
+                    _isSettingPower4 = true;
+                    LaserChannel4Value = power4;
+                    _isSettingPower4 = false;
+                }
+
+                #endregion
 
                 _timer!.Start();
+
                 _timerState!.Start();
             }
         }
 
-        /// <summary>
-        /// Returns whether all channels have been closed
-        /// </summary>
-        /// <returns></returns>
         public async Task<bool> CloserAllLaserChannel()
         {
             var res1 = await _CNILaser!.SetStateAsync(1, false);
@@ -248,17 +301,29 @@ namespace CNILaser
 
     public partial class CNILaserViewModel
     {
+        private bool _isPollingValue = false;
+
         private void Timer_Tick(object? sender, EventArgs e)
         {
+            if (_isPollingValue) return;
+            _isPollingValue = true;
+
             Task.Run(() =>
             {
-                if (IsConnected)
+                try
                 {
-                    if (_CNILaser == null) return;
-                    if (_CNILaser.GetVerifyValue(1, out var channel1Value)) LaserChannel1ActualValue = channel1Value;
-                    if (_CNILaser.GetVerifyValue(2, out var channel2Value)) LaserChannel2ActualValue = channel2Value;
-                    if (_CNILaser.GetVerifyValue(3, out var channel3Value)) LaserChannel3ActualValue = channel3Value;
-                    if (_CNILaser.GetVerifyValue(4, out var channel4Value)) LaserChannel4ActualValue = channel4Value;
+                    if (IsConnected)
+                    {
+                        if (_CNILaser == null) return;
+                        if (_CNILaser.GetVerifyValue(1, out var channel1Value)) LaserChannel1ActualValue = channel1Value;
+                        if (_CNILaser.GetVerifyValue(2, out var channel2Value)) LaserChannel2ActualValue = channel2Value;
+                        if (_CNILaser.GetVerifyValue(3, out var channel3Value)) LaserChannel3ActualValue = channel3Value;
+                        if (_CNILaser.GetVerifyValue(4, out var channel4Value)) LaserChannel4ActualValue = channel4Value;
+                    }
+                }
+                finally
+                {
+                    _isPollingValue = false;
                 }
             });
         }
@@ -299,21 +364,27 @@ namespace CNILaser
         [ObservableProperty]
         private int _laserChannel4Value = -1;
 
-        private bool _isSettingPower = false;
+        private bool _isSettingPower1 = false;
+        private bool _isSettingPower2 = false;
+        private bool _isSettingPower3 = false;
+        private bool _isSettingPower4 = false;
 
-        async partial void OnLaserChannel1ValueChanged(int value)
+        async partial void OnLaserChannel1ValueChanged(int oldValue, int newValue)
         {
-            if (_isSettingPower) return; // Previous execution not finished, discard
-            _isSettingPower = true;
+            if (_isSettingPower1) return;
+            _isSettingPower1 = true;
 
             try
             {
                 _CNILaser!.GetVerifyValue(1, out var actualValue);
-                if (value != actualValue)
+                if (newValue != actualValue)
                 {
-                    var res = await _CNILaser.SetPowerAsync(1, value);
+                    var res = await _CNILaser.SetPowerAsync(1, newValue);
                     if (!res)
                     {
+                        _laserChannel1Value = oldValue;
+                        OnPropertyChanged(nameof(LaserChannel1Value));
+
                         Application.Current?.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show(Application.Current.MainWindow, $"Laser1 SetPower Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -323,23 +394,26 @@ namespace CNILaser
             }
             finally
             {
-                _isSettingPower = false;
+                _isSettingPower1 = false;
             }
         }
 
-        async partial void OnLaserChannel2ValueChanged(int value)
+        async partial void OnLaserChannel2ValueChanged(int oldValue, int newValue)
         {
-            if (_isSettingPower) return; // Previous execution not finished, discard
-            _isSettingPower = true;
+            if (_isSettingPower2) return;
+            _isSettingPower2 = true;
 
             try
             {
                 _CNILaser!.GetVerifyValue(2, out var actualValue);
-                if (value != actualValue)
+                if (newValue != actualValue)
                 {
-                    var res = await _CNILaser.SetPowerAsync(2, value);
+                    var res = await _CNILaser.SetPowerAsync(2, newValue);
                     if (!res)
                     {
+                        _laserChannel2Value = oldValue;
+                        OnPropertyChanged(nameof(LaserChannel2Value));
+
                         Application.Current?.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show(Application.Current.MainWindow, $"Laser2 SetPower Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -349,23 +423,26 @@ namespace CNILaser
             }
             finally
             {
-                _isSettingPower = false;
+                _isSettingPower2 = false;
             }
         }
 
-        async partial void OnLaserChannel3ValueChanged(int value)
+        async partial void OnLaserChannel3ValueChanged(int oldValue, int newValue)
         {
-            if (_isSettingPower) return; // Previous execution not finished, discard
-            _isSettingPower = true;
+            if (_isSettingPower3) return;
+            _isSettingPower3 = true;
 
             try
             {
                 _CNILaser!.GetVerifyValue(3, out var actualValue);
-                if (value != actualValue)
+                if (newValue != actualValue)
                 {
-                    var res = await _CNILaser.SetPowerAsync(3, value);
+                    var res = await _CNILaser.SetPowerAsync(3, newValue);
                     if (!res)
                     {
+                        _laserChannel3Value = oldValue;
+                        OnPropertyChanged(nameof(LaserChannel3Value));
+
                         Application.Current?.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show(Application.Current.MainWindow, $"Laser3 SetPower Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -375,23 +452,26 @@ namespace CNILaser
             }
             finally
             {
-                _isSettingPower = false;
+                _isSettingPower3 = false;
             }
         }
 
-        async partial void OnLaserChannel4ValueChanged(int value)
+        async partial void OnLaserChannel4ValueChanged(int oldValue, int newValue)
         {
-            if (_isSettingPower) return; // Previous execution not finished, discard
-            _isSettingPower = true;
+            if (_isSettingPower4) return;
+            _isSettingPower4 = true;
 
             try
             {
                 _CNILaser!.GetVerifyValue(4, out var actualValue);
-                if (value != actualValue)
+                if (newValue != actualValue)
                 {
-                    var res = await _CNILaser.SetPowerAsync(4, value);
+                    var res = await _CNILaser.SetPowerAsync(4, newValue);
                     if (!res)
                     {
+                        _laserChannel4Value = oldValue;
+                        OnPropertyChanged(nameof(LaserChannel4Value));
+
                         Application.Current?.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show(Application.Current.MainWindow, $"Laser4 SetPower Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -401,7 +481,7 @@ namespace CNILaser
             }
             finally
             {
-                _isSettingPower = false;
+                _isSettingPower4 = false;
             }
         }
 
@@ -418,7 +498,9 @@ namespace CNILaser
                 });
                 return;
             }
+            _isSettingPower1 = true;
             LaserChannel1Value = value;
+            _isSettingPower1 = false;
         }
 
         [RelayCommand]
@@ -434,7 +516,9 @@ namespace CNILaser
                 });
                 return;
             }
+            _isSettingPower1 = true;
             LaserChannel1Value = value;
+            _isSettingPower1 = false;
         }
 
         [RelayCommand]
@@ -450,7 +534,9 @@ namespace CNILaser
                 });
                 return;
             }
+            _isSettingPower2 = true;
             LaserChannel2Value = value;
+            _isSettingPower2 = false;
         }
 
         [RelayCommand]
@@ -466,7 +552,9 @@ namespace CNILaser
                 });
                 return;
             }
+            _isSettingPower2 = true;
             LaserChannel2Value = value;
+            _isSettingPower2 = false;
         }
 
         [RelayCommand]
@@ -478,11 +566,13 @@ namespace CNILaser
             {
                 Application.Current?.Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show(Application.Current.MainWindow, $"Laser13 SetPower Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(Application.Current.MainWindow, $"Laser3 SetPower Error!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
                 });
                 return;
             }
+            _isSettingPower3 = true;
             LaserChannel3Value = value;
+            _isSettingPower3 = false;
         }
 
         [RelayCommand]
@@ -498,7 +588,9 @@ namespace CNILaser
                 });
                 return;
             }
+            _isSettingPower3 = true;
             LaserChannel3Value = value;
+            _isSettingPower3 = false;
         }
 
         [RelayCommand]
@@ -514,7 +606,9 @@ namespace CNILaser
                 });
                 return;
             }
+            _isSettingPower4 = true;
             LaserChannel4Value = value;
+            _isSettingPower4 = false;
         }
 
         [RelayCommand]
@@ -530,7 +624,9 @@ namespace CNILaser
                 });
                 return;
             }
+            _isSettingPower4 = true;
             LaserChannel4Value = value;
+            _isSettingPower4 = false;
         }
 
         [ObservableProperty]
@@ -615,17 +711,30 @@ namespace CNILaser
         [ObservableProperty]
         public int _controlModeIndex = 0;
 
+        private bool _isSettingControlMode = false;
+
         async partial void OnControlModeIndexChanged(int oldValue, int newValue)
         {
-            var res = await _CNILaser!.SetControlModeAsync(newValue);
-            if (!res)
-            {
-                Application.Current?.Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show(Application.Current.MainWindow, $"SetControlMode failed!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
-                });
+            if (_isSettingControlMode) return;
+            _isSettingControlMode = true;
 
-                ControlModeIndex = oldValue;
+            try
+            {
+                var res = await _CNILaser!.SetControlModeAsync(newValue);
+                if (!res)
+                {
+                    Application.Current?.Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show(Application.Current.MainWindow, $"SetControlMode failed!", "Control", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    });
+
+                    _controlModeIndex = oldValue;
+                    OnPropertyChanged(nameof(ControlModeIndex));
+                }
+            }
+            finally
+            {
+                _isSettingControlMode = false;
             }
         }
 
@@ -633,6 +742,8 @@ namespace CNILaser
 
     public partial class CNILaserViewModel
     {
+        private bool _isRefreshing = false;
+
         void RefreshStateInfo()
         {
             var res = _CNILaser!.GetDeviceInfo(out var deviceInfo);
@@ -662,10 +773,20 @@ namespace CNILaser
 
         private void TimerState_Tick(object? sender, EventArgs e)
         {
+            if (_isRefreshing) return;
+            _isRefreshing = true;
+
             Task.Run(() =>
             {
-                RefreshStateInfo();
-            });  
+                try
+                {
+                    RefreshStateInfo();
+                }
+                finally
+                {
+                    _isRefreshing = false;
+                }
+            });
         }
 
         [ObservableProperty]

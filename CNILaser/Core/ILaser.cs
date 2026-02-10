@@ -16,6 +16,11 @@ namespace Simscop.Pl.Core.Hardwares.Interfaces
         public string DevicesName { get; set; }
 
         /// <summary>
+        /// 当前已连接的串口名称
+        /// </summary>
+        public string CurrentPortname{ get;  }
+
+        /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="com">不输入为自动查找；输入则对应开启通道使用</param>
