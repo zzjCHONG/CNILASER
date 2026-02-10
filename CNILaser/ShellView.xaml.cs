@@ -2,14 +2,9 @@
 using Simscop.Spindisk.Wpf.Views;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
-
 namespace CNILaser
 {
-    /// <summary>
-    /// ShellView.xaml 的交互逻辑
-    /// </summary>
     public partial class ShellView : Lift.UI.Controls.Window
     {
         public ShellView()
@@ -20,25 +15,21 @@ namespace CNILaser
         protected override void OnClosing(CancelEventArgs e)
         {
             bool shouldContinue = false;
-
             Application.Current?.Dispatcher.Invoke(() =>
             {
-                var result = MessageBox.Show(Application.Current.MainWindow, "确定要退出吗？", "退出确认", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
+                var result = MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to exit?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 shouldContinue = result == MessageBoxResult.Yes;
             });
 
             if (shouldContinue)
             {
-                //关闭设备，激光器各通道关闭
                 var laserVM = Global.ServiceProvider?.GetService<CNILaserViewModel>();
                 var res = laserVM!.CloserAllLaserChannel();
-
                 base.OnClosing(e);
             }
             else
             {
-                e.Cancel = true; // 阻止关闭
+                e.Cancel = true;
                 return;
             }
         }
@@ -71,13 +62,12 @@ namespace CNILaser
                 }
                 else
                 {
-                    MessageBox.Show("无法找到说明文档！");
+                    MessageBox.Show("User manual not found!");
                 }
-
             }
             catch (Exception ex)
             {
-                MessageBox.Show("无法打开文档：" + ex.Message);
+                MessageBox.Show("Failed to open document: " + ex.Message);
             }
         }
 

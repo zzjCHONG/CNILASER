@@ -616,7 +616,7 @@ namespace Simscop.Hardware.CNI.FourChannel
 
     public partial class CNI
     {
-        private readonly int _sendcommandTimeout = 1000;
+        private readonly int _sendcommandTimeout = 300;
         private readonly byte[] commandBase = new byte[8] { 0x53, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };
         private readonly byte[] responseforSetting = new byte[9] { 0x41, 0x09, 0x00, 0x01, 0x4F, 0x4B, 0x21, 0x00, 0x0D };
         private readonly byte[] responseforReading = new byte[8] { 0x41, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D };

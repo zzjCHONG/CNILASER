@@ -183,12 +183,19 @@
 
             <!--  系统状态  -->
 
-            <UniformGrid
-                Grid.Row="1"
-                Margin="0,5"
-                Columns="4">
+            <Grid Grid.Row="1" Margin="2,5">
 
-                <StackPanel Margin="2,0" Orientation="Horizontal">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel
+                    Grid.Column="0"
+                    Margin="2,0"
+                    Orientation="Horizontal">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
@@ -200,7 +207,10 @@
                         Text="{Binding LaserKeyState}" />
                 </StackPanel>
 
-                <StackPanel Margin="2,0" Orientation="Horizontal">
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="2,0"
+                    Orientation="Horizontal">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
@@ -212,19 +222,10 @@
                         Text="{Binding LaserInterlockState}" />
                 </StackPanel>
 
-                <StackPanel Margin="2,0" Orientation="Horizontal">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="Estop: " />
-                    <TextBlock
-                        Margin="3,0,0,0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="{Binding LaserEstopState}" />
-                </StackPanel>
-
-                <StackPanel Margin="2,0" Orientation="Horizontal">
+                <StackPanel
+                    Grid.Column="2"
+                    Margin="2,0"
+                    Orientation="Horizontal">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
@@ -235,7 +236,22 @@
                         FontWeight="Bold"
                         Text="{Binding LaserPreheatState}" />
                 </StackPanel>
-            </UniformGrid>
+
+                <StackPanel
+                    Grid.Column="3"
+                    Margin="2,0"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="Estop: " />
+                    <TextBlock
+                        Margin="3,0,0,0"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="{Binding LaserEstopState}" />
+                </StackPanel>
+            </Grid>
 
         </Grid>
 

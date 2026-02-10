@@ -31,6 +31,8 @@ namespace CNILaser
             this.Unloaded += OnControlUnloaded;
         }
 
+        #region 输入
+
         private Window? _parentWindow;
         private bool _isEventRegistered = false;
         private void OnControlLoaded(object sender, RoutedEventArgs e)
@@ -187,5 +189,8 @@ namespace CNILaser
                 textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateTarget();
             }
         }
+
+        #endregion
+
     }
 }
