@@ -94,5 +94,10 @@ namespace CNILaser.Core
             return true;
         }
 
+        public bool GetControlMode(out int index)
+        {
+            index = 0;
+            return true;
+        }
     }
 }

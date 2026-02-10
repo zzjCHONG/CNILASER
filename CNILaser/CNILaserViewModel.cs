@@ -142,6 +142,9 @@ namespace CNILaser
         {
             if (IsConnected)
             {
+                if (_CNILaser!.GetControlMode(out int modeIndex))
+                    ControlModeIndex = modeIndex;
+
                 await _CNILaser!.SetStateAsync(1, false);
                 await _CNILaser.SetStateAsync(2, false);
                 await _CNILaser.SetStateAsync(3, false);
@@ -154,12 +157,10 @@ namespace CNILaser
                     LaserChannel2Value = col[2];
                     LaserChannel3Value = col[3];
                     LaserChannel4Value = col[4];
-
-                    _timer!.Start();
-                    _timerState!.Start();
-
-                    RefreshStateInfo();
                 }
+
+                _timer!.Start();
+                _timerState!.Start();
             }
         }
 
@@ -169,15 +170,10 @@ namespace CNILaser
         /// <returns></returns>
         public async Task<bool> CloserAllLaserChannel()
         {
-            if (LaserChannel1Enable) await _CNILaser!.SetStateAsync(1, false);
-            if (LaserChannel2Enable) await _CNILaser!.SetStateAsync(2, false);
-            if (LaserChannel3Enable) await _CNILaser!.SetStateAsync(3, false);
-            if (LaserChannel4Enable) await _CNILaser!.SetStateAsync(4, false);
-
-            var res1 = !LaserChannel1Enable || await _CNILaser!.SetStateAsync(1, false);
-            var res2 = !LaserChannel2Enable || await _CNILaser!.SetStateAsync(2, false);
-            var res3 = !LaserChannel3Enable || await _CNILaser!.SetStateAsync(3, false);
-            var res4 = !LaserChannel4Enable || await _CNILaser!.SetStateAsync(4, false);
+            var res1 = await _CNILaser!.SetStateAsync(1, false);
+            var res2 = await _CNILaser!.SetStateAsync(2, false);
+            var res3 = await _CNILaser!.SetStateAsync(3, false);
+            var res4 = await _CNILaser!.SetStateAsync(4, false);
 
             return res1 && res2 && res3 && res4;
         }
@@ -333,40 +329,6 @@ namespace CNILaser
         [RelayCommand]
         private async Task<bool> SetChannelFirstStatusAsync()
         {
-            if (LaserChannel1Enable)
-            {
-                if (LaserChannel2Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(2, false))
-                    {
-                        Console.WriteLine("Laser2 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel2Enable = false;
-                }
-
-                if (LaserChannel3Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(3, false))
-                    {
-                        Console.WriteLine("Laser3 SetStatus Error!");
-                        return false;
-                    }
-
-                    LaserChannel3Enable = false;
-                }
-                if (LaserChannel4Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(4, false))
-                    {
-                        Console.WriteLine("Laser4 SetStatus Error!");
-                        return false;
-                    }
-
-                    LaserChannel4Enable = false;
-                }
-            }
-
             if (!await _CNILaser!.SetStateAsync(1, LaserChannel1Enable))
             {
                 Console.WriteLine("Laser1 SetStatus Error!");
@@ -379,40 +341,6 @@ namespace CNILaser
         [RelayCommand]
         private async Task<bool> SetChannelSecondStatusAsync()
         {
-            if (LaserChannel2Enable)
-            {
-                if (LaserChannel1Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(1, false))
-                    {
-                        Console.WriteLine("Laser1 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel1Enable = false;
-                }
-
-                if (LaserChannel3Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(3, false))
-                    {
-                        Console.WriteLine("Laser3 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel3Enable = false;
-                }
-
-                if (LaserChannel4Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(4, false))
-                    {
-                        Console.WriteLine("Laser4 SetStatus Error!");
-                        return false;
-                    }
-
-                    LaserChannel4Enable = false;
-                }
-            }
-
             if (!await _CNILaser!.SetStateAsync(2, LaserChannel2Enable))
             {
                 Console.WriteLine("Laser2 SetStatus Error!");
@@ -426,41 +354,6 @@ namespace CNILaser
         [RelayCommand]
         private async Task<bool> SetChannelThirdStatusAsync()
         {
-
-            if (LaserChannel3Enable)
-            {
-                if (LaserChannel1Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(1, false))
-                    {
-                        Console.WriteLine("Laser1 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel1Enable = false;
-                }
-
-                if (LaserChannel2Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(2, false))
-                    {
-                        Console.WriteLine("Laser2 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel2Enable = false;
-                }
-
-                if (LaserChannel4Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(4, false))
-                    {
-                        Console.WriteLine("Laser4 SetStatus Error!");
-                        return false;
-                    }
-
-                    LaserChannel4Enable = false;
-                }
-            }
-
             if (!await _CNILaser!.SetStateAsync(3, LaserChannel3Enable))
             {
                 Console.WriteLine("Laser3 SetStatus Error!");
@@ -473,40 +366,6 @@ namespace CNILaser
         [RelayCommand]
         private async Task<bool> SetChannelFourthStatusAsync()
         {
-
-            if (LaserChannel4Enable)
-            {
-                if (LaserChannel1Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(1, false))
-                    {
-                        Console.WriteLine("Laser1 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel1Enable = false;
-                }
-
-                if (LaserChannel2Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(2, false))
-                    {
-                        Console.WriteLine("Laser2 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel2Enable = false;
-                }
-
-                if (LaserChannel3Enable)
-                {
-                    if (!await _CNILaser!.SetStateAsync(3, false))
-                    {
-                        Console.WriteLine("Laser3 SetStatus Error!");
-                        return false;
-                    }
-                    LaserChannel3Enable = false;
-                }
-            }
-
             if (!await _CNILaser!.SetStateAsync(4, LaserChannel4Enable))
             {
                 Console.WriteLine("Laser4 SetStatus Error!");

@@ -114,6 +114,13 @@ namespace Simscop.Pl.Core.Hardwares.Interfaces
         public bool SetControlMode(int index);
 
         /// <summary>
+        /// 获取激光模式
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public bool GetControlMode(out int index);
+
+        /// <summary>
         /// 获取激光设备信息
         /// </summary>
         /// <param name="deviceInfo"></param>

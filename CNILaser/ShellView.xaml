@@ -112,7 +112,6 @@
         </Border>
 
         <Border
-         
             Margin="2"
             BorderBrush="Gray"
             BorderThickness="1"
