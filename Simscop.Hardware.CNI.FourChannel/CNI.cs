@@ -578,6 +578,7 @@ namespace Simscop.Hardware.CNI.FourChannel
         /// </summary>
         public bool ReadDeviceInfo(out DeviceInfo? info)
         {
+            Stopwatch sw = Stopwatch.StartNew();
             info = null;
             try
             {
@@ -603,6 +604,11 @@ namespace Simscop.Hardware.CNI.FourChannel
             {
                 Console.WriteLine($"ReadDeviceInfo Error: {ex.Message}");
                 return false;
+            }
+            finally
+            {
+                sw.Stop();
+                Debug.WriteLine(sw.ElapsedMilliseconds + "ms");
             }
         }
 
