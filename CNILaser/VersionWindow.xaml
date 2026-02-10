@@ -19,7 +19,7 @@
                 FontSize="14"
                 FontWeight="Bold"
                 Foreground="#509CFF"
-                Text="软件信息" />
+                Text="Software Information" />
         </StackPanel>
     </liftui:Window.NonClientAreaContent>
 
@@ -50,32 +50,31 @@
                     VerticalAlignment="Center"
                     FontSize="18"
                     FontWeight="Bold"
-                    Text="多通道激光器" />
+                    Text="Multi-Channel Laser" />
             </StackPanel>
 
             <TextBlock
                 x:Name="VersionText"
                 Margin="0,5"
                 FontSize="14"
-                Text="版本号：v1.0.0.0"
+                Text="Version: v1.0.0.0"
                 TextAlignment="Center" />
             <TextBlock
                 Margin="0,5"
                 FontSize="14"
-                Text="开发者：Simscop"
+                Text="Developer: Simscop"
                 TextAlignment="Center" />
             <TextBlock
                 x:Name="CompanyText"
                 Margin="0,5"
                 FontSize="14"
-                Text="瑆科仪器(广州)有限公司"
+                Text="Simscop Instrument (Guangzhou) Co., Ltd"
                 TextAlignment="Center" />
             <TextBlock
                 Margin="0,10,0,0"
                 FontSize="13"
-                Text="版权所有 © 2025"
+                Text="Copyright © 2025-2026 Simscop"
                 TextAlignment="Center" />
         </StackPanel>
-
     </Border>
 </liftui:Window>
