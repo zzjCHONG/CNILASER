@@ -850,28 +850,28 @@ namespace CNILaser
         private double laserChannel4Temperature = -1;
 
         [ObservableProperty]
-        private string laserChannel1State = "N/A";
+        private string laserChannel1State = "N.A.";
 
         [ObservableProperty]
-        private string laserChannel2State = "N/A";
+        private string laserChannel2State = "N.A.";
 
         [ObservableProperty]
-        private string laserChannel3State = "N/A";
+        private string laserChannel3State = "N.A.";
 
         [ObservableProperty]
-        private string laserChannel4State = "N/A";
+        private string laserChannel4State = "N.A.";
 
         [ObservableProperty]
-        private string laserKeyState = "N/A";
+        private string laserKeyState = "N.A.";
 
         [ObservableProperty]
-        private string laserInterlockState = "N/A";
+        private string laserInterlockState = "N.A.";
 
         [ObservableProperty]
-        private string laserPreheatState = "N/A";
+        private string laserPreheatState = "N.A.";
 
         [ObservableProperty]
-        private string laserEstopState = "N/A";
+        private string laserEstopState = "N.A.";
 
         [ObservableProperty]
         private bool _isLaserPreheatAbnormal = false;
