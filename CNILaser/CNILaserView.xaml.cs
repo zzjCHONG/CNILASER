@@ -173,11 +173,16 @@ namespace CNILaser
             if (double.TryParse(textBox.Text, out double doubleValue))
             {
                 int value = (int)Math.Ceiling(doubleValue);
-                value = Math.Clamp(value, 0, 100);
 
-                textBox.Text = value.ToString(); // 显示为整数
+                if (value > 100 || value < 0)
+                {
+                    // 超出范围，回退原绑定值
+                    textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateTarget();
+                    return;
+                }
 
-                // 更新绑定源
+                textBox.Text = value.ToString();
+
                 var binding = textBox.GetBindingExpression(TextBox.TextProperty);
                 binding?.UpdateSource();
 
