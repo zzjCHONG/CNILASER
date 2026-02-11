@@ -69,7 +69,7 @@ namespace CNILaser
 
         private void UserManual_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            string relativePath = @"Docs\多通道激光器软件说明书_2026-02-11_v1.0.0.0.pdf";
+            string relativePath = @"Docs\Multi-Channel Laser Software User Manual_2026-02-11_v1.0.0.0.pdf";
             string documentPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
             try
             {
