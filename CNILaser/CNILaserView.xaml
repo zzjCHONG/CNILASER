@@ -49,8 +49,8 @@
                                 Value="{Binding LaserChannel1Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#53aea0" />
-                                        <GradientStop Offset="1" Color="#a3d9cb" />
+                                        <GradientStop Offset="0" Color="#7B2D8B" />
+                                        <GradientStop Offset="1" Color="#B06AC4" />
                                     </LinearGradientBrush>
                                 </Slider.Resources>
                             </Slider>
@@ -119,8 +119,8 @@
                                 Value="{Binding LaserChannel2Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#479546" />
-                                        <GradientStop Offset="1" Color="#92d66a" />
+                                        <GradientStop Offset="0" Color="#1A6B9A" />
+                                        <GradientStop Offset="1" Color="#5BC8E8" />
                                     </LinearGradientBrush>
                                 </Slider.Resources>
                             </Slider>
@@ -189,8 +189,8 @@
                                 Value="{Binding LaserChannel3Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#a4251c" />
-                                        <GradientStop Offset="1" Color="#c9716e" />
+                                        <GradientStop Offset="0" Color="#2E7D32" />
+                                        <GradientStop Offset="1" Color="#66BB6A" />
                                     </LinearGradientBrush>
                                 </Slider.Resources>
                             </Slider>
@@ -258,8 +258,8 @@
                                 Value="{Binding LaserChannel4Value, Delay=100}">
                                 <Slider.Resources>
                                     <LinearGradientBrush x:Key="PrimaryBrush" StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#872083" />
-                                        <GradientStop Offset="1" Color="#876b86" />
+                                        <GradientStop Offset="0" Color="#C62828" />
+                                        <GradientStop Offset="1" Color="#EF5350" />
                                     </LinearGradientBrush>
                                 </Slider.Resources>
                             </Slider>
