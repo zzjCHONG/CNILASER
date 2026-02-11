@@ -15,7 +15,7 @@ namespace CNILaser
             InitializeComponent();
         }
 
-        protected override async void OnClosing(CancelEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
             if (_isClosing)
             {
@@ -23,14 +23,24 @@ namespace CNILaser
                 return;
             }
 
+            // 始终取消默认关闭，由我们自己控制
             e.Cancel = true;
 
-            var result = MessageBox.Show(Application.Current.MainWindow,
+            if (_isClosing) return;
+
+            // 同步弹出确认框（此时窗口还完全正常）
+            var result = MessageBox.Show(this,
                 "Are you sure you want to exit?", "Exit Confirmation",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result != MessageBoxResult.Yes) return;
 
+            // 异步执行关闭流程，不阻塞 OnClosing
+            _ = CloseAsync();
+        }
+
+        private async Task CloseAsync()
+        {
             var laserVM = Global.ServiceProvider?.GetService<CNILaserViewModel>();
             if (laserVM != null)
             {
@@ -38,7 +48,12 @@ namespace CNILaser
             }
 
             _isClosing = true;
-            this.Close();
+
+            // 回到 UI 线程执行关闭
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                this.Close();
+            });
         }
 
         protected override void OnClosed(EventArgs e)
@@ -60,12 +75,11 @@ namespace CNILaser
             {
                 if (System.IO.File.Exists(documentPath))
                 {
-                    ProcessStartInfo psi = new ProcessStartInfo
+                    Process.Start(new ProcessStartInfo
                     {
                         FileName = documentPath,
                         UseShellExecute = true
-                    };
-                    Process.Start(psi);
+                    });
                 }
                 else
                 {
