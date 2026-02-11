@@ -134,7 +134,7 @@ namespace CNILaser
             {
                 Application.Current?.Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show(Application.Current.MainWindow, $"Connection failed!", "Connection", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(Application.Current.MainWindow, $"Connection failed!", "Connection", MessageBoxButton.OK, MessageBoxImage.Warning);
                 });
             }
         }
@@ -164,7 +164,7 @@ namespace CNILaser
             {
                 Application.Current?.Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show(Application.Current.MainWindow, $"Connection failed!", "Connection", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(Application.Current.MainWindow, $"Connection failed!", "Connection", MessageBoxButton.OK, MessageBoxImage.Warning);
                 });
             }
         }
@@ -873,8 +873,6 @@ namespace CNILaser
         [ObservableProperty]
         private string laserEstopState = "N.A.";
 
-        [ObservableProperty]
-        private bool _isLaserPreheatAbnormal = false;
     }
 
 }

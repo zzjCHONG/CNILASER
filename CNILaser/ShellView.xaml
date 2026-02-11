@@ -31,7 +31,7 @@
                         Click="Info_Click"
                         Header="Parameters"
                         Visibility="Collapsed" />
-                    <Separator />
+                    <Separator Visibility="Collapsed" />
                     <MenuItem
                         x:Name="Exit"
                         Click="Exit_Click"
