@@ -299,9 +299,9 @@ namespace CNILaser
         public async Task<bool> CloserAllLaserChannel()
         {
             var res1 = await _CNILaser!.SetStateAsync(1, false);
-            var res2 = await _CNILaser!.SetStateAsync(2, false);
-            var res3 = await _CNILaser!.SetStateAsync(3, false);
+            var res2 = await _CNILaser!.SetStateAsync(2, false);  
             var res4 = await _CNILaser!.SetStateAsync(4, false);
+            var res3 = await _CNILaser!.SetStateAsync(3, false);//异常状态下，该通道无法控制
 
             return res1 && res2 && res3 && res4;
         }

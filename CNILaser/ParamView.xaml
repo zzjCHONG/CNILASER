@@ -212,9 +212,7 @@
                                     <DataTrigger Binding="{Binding LaserKeyState}" Value="OFF">
                                         <Setter Property="Foreground" Value="Red" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding LaserKeyState}" Value="N.A.">
-                                        <Setter Property="Foreground" Value="Gray" />
-                                    </DataTrigger>
+
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
@@ -241,9 +239,7 @@
                                     <DataTrigger Binding="{Binding LaserInterlockState}" Value="Error">
                                         <Setter Property="Foreground" Value="Red" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding LaserInterlockState}" Value="N.A.">
-                                        <Setter Property="Foreground" Value="Gray" />
-                                    </DataTrigger>
+
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
@@ -270,9 +266,7 @@
                                     <DataTrigger Binding="{Binding LaserEstopState}" Value="Error">
                                         <Setter Property="Foreground" Value="Red" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding LaserEstopState}" Value="N.A.">
-                                        <Setter Property="Foreground" Value="Gray" />
-                                    </DataTrigger>
+
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
@@ -308,9 +302,7 @@
                                     <DataTrigger Binding="{Binding LaserPreheatState}" Value="Finished">
                                         <Setter Property="Foreground" Value="White" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding LaserPreheatState}" Value="N.A.">
-                                        <Setter Property="Foreground" Value="Gray" />
-                                    </DataTrigger>
+
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
