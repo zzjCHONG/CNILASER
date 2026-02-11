@@ -3,35 +3,42 @@ using Simscop.Spindisk.Wpf.Views;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+
 namespace CNILaser
 {
     public partial class ShellView : Lift.UI.Controls.Window
     {
+        private bool _isClosing = false;
+
         public ShellView()
         {
             InitializeComponent();
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override async void OnClosing(CancelEventArgs e)
         {
-            bool shouldContinue = false;
-            Application.Current?.Dispatcher.Invoke(() =>
+            if (_isClosing)
             {
-                var result = MessageBox.Show(Application.Current.MainWindow, "Are you sure you want to exit?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                shouldContinue = result == MessageBoxResult.Yes;
-            });
-
-            if (shouldContinue)
-            {
-                var laserVM = Global.ServiceProvider?.GetService<CNILaserViewModel>();
-                var res = laserVM!.CloserAllLaserChannel();
-                base.OnClosing(e);
-            }
-            else
-            {
-                e.Cancel = true;
+                e.Cancel = false;
                 return;
             }
+
+            e.Cancel = true;
+
+            var result = MessageBox.Show(Application.Current.MainWindow,
+                "Are you sure you want to exit?", "Exit Confirmation",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            var laserVM = Global.ServiceProvider?.GetService<CNILaserViewModel>();
+            if (laserVM != null)
+            {
+                await laserVM.CloserAllLaserChannel();
+            }
+
+            _isClosing = true;
+            this.Close();
         }
 
         protected override void OnClosed(EventArgs e)
