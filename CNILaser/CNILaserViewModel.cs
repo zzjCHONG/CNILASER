@@ -776,6 +776,34 @@ namespace CNILaser
                 LaserPreheatState = device.PreheatState.ToString();
                 LaserEstopState = device.EstopError ? "Error" : "OK";
                 LaserInterlockState = device.InterlockError ? "Error" : "OK";
+
+                // 检测到任意异常状态，关闭所有激光通道
+                bool hasAbnormal = !device.KeyState          // Key 为 OFF
+                                || device.EstopError          // Estop 异常
+                                || device.InterlockError      // Interlock 异常
+                                || LaserPreheatState != "Finished";    // Preheat 异常
+
+                if (hasAbnormal)
+                {
+                    bool anyEnabled = LaserChannel1Enable || LaserChannel2Enable
+                                   || LaserChannel3Enable || LaserChannel4Enable;
+                    if (anyEnabled)
+                    {
+                        // 切回 UI 线程更新状态并发送关闭命令
+                        Application.Current?.Dispatcher.Invoke(() =>
+                        {
+                            LaserChannel1Enable = false;
+                            LaserChannel2Enable = false;
+                            LaserChannel3Enable = false;
+                            LaserChannel4Enable = false;
+
+                            //await _CNILaser!.SetStateAsync(1, false);//不需要手动关闭，硬件已完成关闭
+                            //await _CNILaser!.SetStateAsync(2, false);
+                            //await _CNILaser!.SetStateAsync(3, false);
+                            //await _CNILaser!.SetStateAsync(4, false);
+                        });
+                    }
+                }
             }
         }
 
@@ -844,6 +872,9 @@ namespace CNILaser
 
         [ObservableProperty]
         private string laserEstopState = "N/A";
+
+        [ObservableProperty]
+        private bool _isLaserPreheatAbnormal = false;
     }
 
 }
