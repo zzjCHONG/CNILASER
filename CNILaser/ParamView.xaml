@@ -101,7 +101,7 @@
                     Margin="5"
                     HorizontalAlignment="Center"
                     Foreground="Gray"
-                    Text="{Binding LaserChannel3Temperature}" />
+                    Text="N.A." />
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="4"
@@ -134,7 +134,7 @@
                     Margin="5"
                     HorizontalAlignment="Center"
                     Foreground="Gray"
-                    Text="{Binding LaserChannel3Temperature}" />
+                    Text="N.A." />
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="4"
@@ -183,8 +183,8 @@
 
             <!--  系统状态  -->
 
+            <!--  系统状态  -->
             <Grid Grid.Row="1" Margin="2,5">
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -204,7 +204,21 @@
                         Margin="3,0,0,0"
                         VerticalAlignment="Center"
                         FontWeight="Bold"
-                        Text="{Binding LaserKeyState}" />
+                        Text="{Binding LaserKeyState}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Green" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding LaserKeyState}" Value="OFF">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding LaserKeyState}" Value="N/A">
+                                        <Setter Property="Foreground" Value="Gray" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </StackPanel>
 
                 <StackPanel
@@ -219,7 +233,21 @@
                         Margin="3,0,0,0"
                         VerticalAlignment="Center"
                         FontWeight="Bold"
-                        Text="{Binding LaserInterlockState}" />
+                        Text="{Binding LaserInterlockState}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Green" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding LaserInterlockState}" Value="Error">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding LaserInterlockState}" Value="N/A">
+                                        <Setter Property="Foreground" Value="Gray" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </StackPanel>
 
                 <StackPanel
@@ -234,7 +262,30 @@
                         Margin="3,0,0,0"
                         VerticalAlignment="Center"
                         FontWeight="Bold"
-                        Text="{Binding LaserPreheatState}" />
+                        Text="{Binding LaserPreheatState}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Green" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding LaserPreheatState}" Value="Preheating">
+                                        <Setter Property="Foreground" Value="Orange" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding LaserPreheatState}" Value="SystemError">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding LaserPreheatState}" Value="Unknown">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding LaserPreheatState}" Value="Finished">
+                                        <Setter Property="Foreground" Value="Green" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding LaserPreheatState}" Value="N/A">
+                                        <Setter Property="Foreground" Value="Gray" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </StackPanel>
 
                 <StackPanel
@@ -249,7 +300,21 @@
                         Margin="3,0,0,0"
                         VerticalAlignment="Center"
                         FontWeight="Bold"
-                        Text="{Binding LaserEstopState}" />
+                        Text="{Binding LaserEstopState}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Green" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding LaserEstopState}" Value="Error">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding LaserEstopState}" Value="N/A">
+                                        <Setter Property="Foreground" Value="Gray" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
 
